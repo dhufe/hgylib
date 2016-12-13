@@ -42,11 +42,18 @@ int main ( int argc, const char* argv[] ) {
         return EXIT_FAILURE;
     }
 
-    std::cout << "Dimensions : " << pFile->pnDimension[0] << "x"        << pFile->pnDimension[1] << "x" << pFile->pnDimension[2] << std::endl;
+    std::cout << "Dimensions : ";
+    for ( auto i = 0; i < pFile->nCoordinates; i++ ) {
+        if ( ( i - 1 ) < pFile->nCoordinates )
+            std::cout <<  pFile->pnDimension[i] << "x";
+        else
+            std::cout << pFile->pnDimension[i] << std::endl;
+    }
+    /*
     std::cout << "Start      : " << pFile->pdStart[0]     << "x"        << pFile->pdStart[1]     << "x" << pFile->pdStart[2]     << std::endl;
     std::cout << "Scale      : " << pFile->pdScale[0]     << "x"        << pFile->pdScale[1]     << "x" << pFile->pdScale[2]     << std::endl;
     std::cout << "nSamples   : " << pFile->pnDimension[0] * pFile->pnDimension[1] * pFile->pnDimension[2] << std::endl;
-
+    */
     try {
         pcData = new int16_t [ pFile->nSamples ] ;
     } catch (std::bad_alloc) {
