@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <hglib.h>
+#include <inttypes.h>
 #include <hlibexeception.h>
 
 int main ( int argc, const char* argv[] ) {
@@ -32,7 +33,7 @@ int main ( int argc, const char* argv[] ) {
         szFileName = std::string(argv[1]);
 
     HGParser hp ( szFileName );
-    char* pcData  = nullptr;
+    int16_t* pcData  = nullptr;
     HGFileInfo* pFile = nullptr;
     try {
         hp.parseFile(&pFile);
@@ -47,7 +48,7 @@ int main ( int argc, const char* argv[] ) {
     std::cout << "nSamples   : " << pFile->pnDimension[0] * pFile->pnDimension[1] * pFile->pnDimension[2] << std::endl;
 
     try {
-        pcData = new char [ pFile->nSamples ] ;
+        pcData = new int16_t [ pFile->nSamples ] ;
     } catch (std::bad_alloc) {
         std::cerr << "unable to allocate memory!" << std::endl;
     }

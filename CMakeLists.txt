@@ -36,10 +36,10 @@ ADD_EXECUTABLE(
 
 TARGET_LINK_LIBRARIES (
     hgyparser
-    hgyfileformatlib
+    hg
     )
 
 ADD_DEPENDENCIES (
     hgyparser
-    hgyfileformatlib
+    hg
     )

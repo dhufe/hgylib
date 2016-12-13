@@ -3,22 +3,31 @@
 
 #include <map>
 #include <string>
+#include <cstdint>
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
+
 
 struct HGFileInfo {
     size_t      *pnDimension;
     double      *pdScale;
     double      *pdStart;
     std::string *pUnits;
+	char		*pcUnits;
     ssize_t     nSamples;
     double      *pdMeasurementScale;
+	double		dAmpScaling;
     size_t      nCoordinates;
+	ssize_t		nDataOffset;
 };
 
 class HGParser {
     public:
         explicit HGParser   ( const std::string& szFileName );
         void     parseFile  ( HGFileInfo** ppFileInfo );
-        void     getData    ( char* pcAmplitude, HGFileInfo** );
+		void     getData	( int16_t *piAmplitude, HGFileInfo**);
         virtual ~HGParser   ( void );
         
     private:
@@ -27,8 +36,9 @@ class HGParser {
         struct data: std::map <std::string, std::string> {
             public:
                 bool    iskey           ( const std::string& s ) const;
-                int     getIntValue     ( const std::string& key );
+                long    getIntValue     ( const std::string& key );
                 float   getFloatValue   ( const std::string& key );
+				std::string getStringValue(const std::string& key );
         };
     
         friend std::istream& operator >> ( std::istream& ins, data& d );

@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 
-PROJECT ( hgyfileformatlib )
+PROJECT ( hg )
 
 #SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../bin)
 
-file (GLOB LIB_SOURCES  "src/*.cpp" )
-file (GLOB LIB_HEADERS  "inc/*.h" "private/*.h" )
+file (GLOB DIP_SOURCES  "src/*.cpp" )
+file (GLOB DIP_HEADERS  "inc/*.h" "private/*.h" )
 
 ADD_DEFINITIONS( -D_USE_MATH_DEFINES )
 
@@ -16,19 +16,19 @@ INCLUDE_DIRECTORIES(
     "${PROJECT_SOURCE_DIR}/private"
     )
 
-source_group("Sources" FILES ${LIB_SOURCES})
-source_group("Headers" FILES ${LIB_HEADERS})
+source_group("Sources" FILES ${DIP_SOURCES})
+source_group("Headers" FILES ${DIP_HEADERS})
 
 IF (MSVC)
-    ADD_DEFINITIONS(-DDOWAIT)
+  	ADD_DEFINITIONS(-DDOWAIT)
 ELSE (MSVC)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=gnu++11")
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=gnu++11")
     ADD_DEFINITIONS(-std=gnu++11)
 ENDIF (MSVC)
 
-
+	
 ADD_LIBRARY(
-    hgyfileformatlib
-    ${LIB_SOURCES}
-    ${LIB_HEADERS}
-    )
+    hg
+    ${DIP_SOURCES}
+	${DIP_HEADERS}
+ )
