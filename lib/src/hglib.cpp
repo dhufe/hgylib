@@ -8,32 +8,32 @@
 
 std::istream& operator >> ( std::istream& ins, HGParser::data& d ) {
     std::string s, key, value;
-    
+
     // For each (key, value) pair in the file
     while (std::getline( ins, s ))
     {
         std::string::size_type begin = s.find_first_not_of( " \f\t\v" );
-        
+
         // Skip blank lines
         if (begin == std::string::npos) continue;
-        
+
         // Skip commentary and groups
         if (std::string( "#;[" ).find( s[ begin ] ) != std::string::npos) continue;
-        
+
         // Extract the key value
         std::string::size_type end = s.find( '=', begin );
         key = s.substr( begin, end - begin );
-        
+
         // (No leading or trailing whitespace allowed)
         key.erase( key.find_last_not_of( " \f\t\v" ) + 1 );
-        
+
         // No blank keys allowed
         if (key.empty()) continue;
-        
+
         // Extract the value (no leading or trailing whitespace allowed)
         begin = s.find_first_not_of( " \f\n\r\t\v", end + 1 );
         end   = s.find_last_not_of(  " \f\n\r\t\v" ) + 1;
-        
+
         // catching n_pos > size() out of range exception
         try {
             value = s.substr( begin, end - begin );
@@ -43,10 +43,10 @@ std::istream& operator >> ( std::istream& ins, HGParser::data& d ) {
         // Insert the properly extracted (key, value) pair into the map
         if ( value.empty() )
             continue;
-        
+
         d[ key ] = value;
     }
-    
+
     return ins;
 }
 
@@ -61,15 +61,15 @@ std::ostream& operator << ( std::ostream& outs, const HGParser::data& d ) {
 }
 
 
-HGParser::HGParser ( const std::string& szFileName )
+    HGParser::HGParser ( const std::string& szFileName )
     : szHFileName( szFileName )
-    , nDataOffset(0)
+      , nDataOffset(0)
 {
 
 }
 
 HGParser::~HGParser( void ) {
-    
+
 }
 
 void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
@@ -79,7 +79,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
     } catch ( HLibException& e) {
         throw HLibException ( "Could not read file!");
     }
-    
+
     if ( *ppFileInfo == nullptr ) {
         try {
             (*ppFileInfo) = new HGFileInfo();
@@ -88,9 +88,15 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
         }
     }
 
+    if ( hconfig.getStringValue ( "DataType" ).compare ( "V" ) == 0 ) {
+        (*ppFileInfo)->eType = HGYVolumeScan;
+    } else {
+        (*ppFileInfo)->eType = HGYScan;
+    }
+
     // get data offset
     try {
-         (*ppFileInfo)->nDataOffset = hconfig.getIntValue ("DataOffset");
+        (*ppFileInfo)->nDataOffset = hconfig.getIntValue ("DataOffset");
     } catch ( int e ) {
         if ( e == 0 ) {
             throw HLibException("key isn't avaiable!");
@@ -108,9 +114,9 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
         } else if ( e == 1 ) {
             throw HLibException("eof reached and no suitable key was found!");
         }
-        
+
     }
-    
+
 #if _DEBUG
     std::cout << "number of coordinates : " << (*ppFileInfo)->nCoordinates;
 #endif
@@ -125,7 +131,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
     } catch ( const std::bad_alloc& e ) {
         throw HLibException ( "Bad allocation exception of FileInfo attributes!" );
     }
-    
+
     std::stringstream ss;
     ss.clear(); ss.str("");
     for ( size_t i = 0; i < (*ppFileInfo)->nCoordinates; ++i ) {
@@ -139,14 +145,14 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
 
         try {
             ss << "Coord" << i + 1 << ".Points";
-            (*ppFileInfo)->pnDimension[i] = hconfig.getIntValue   ( ss.str() );		
+            (*ppFileInfo)->pnDimension[i] = hconfig.getIntValue   ( ss.str() );
             ss.clear(); ss.str(""); ss << "Coord" << i + 1 << ".Increment";
             (*ppFileInfo)->pdScale[i] = hconfig.getFloatValue(ss.str());
             ss.clear(); ss.str(""); ss << "Coord" << i + 1 << ".Start";
             (*ppFileInfo)->pdStart[i] = hconfig.getFloatValue(ss.str());
             ss.clear(); ss.str(""); ss << "Coord" << i + 1 << ".Unit";
             (*ppFileInfo)->pUnits[i] = hconfig.getStringValue(ss.str());
-            
+
             // scaling for SI units
             if ((*ppFileInfo)->pUnits[i].compare("mm") == 0) {
                 (*ppFileInfo)->pcUnits[i] = 'm';
@@ -156,8 +162,8 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
                 (*ppFileInfo)->pcUnits[i] = 's';
                 (*ppFileInfo)->pdScale[i] = (*ppFileInfo)->pdScale[i] * 1e-6;
                 (*ppFileInfo)->pdStart[i] = (*ppFileInfo)->pdStart[i] * 1e-6;
-            } 
-            
+            }
+
             // clearing stringstream
             ss.clear(); ss.str("");
         } catch ( int e) {
@@ -177,7 +183,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
 }
 
 void HGParser::getData( int16_t *piAmplitude, HGFileInfo** ppFileInfo ) {
-    
+
     if (piAmplitude == nullptr)
         return;
 
@@ -202,7 +208,7 @@ void HGParser::getData( int16_t *piAmplitude, HGFileInfo** ppFileInfo ) {
         g.close();
     } catch ( const std::ifstream::failure& e) {
         throw HLibException ( "Exception opening/reading/closing file!!" );
-    }    
+    }
 }
 
 void HGParser::parseTextPart ( void ) {
@@ -213,10 +219,10 @@ void HGParser::parseTextPart ( void ) {
         std::ifstream f( szHFileName.c_str() , std::ifstream::in );
         f.exceptions ( std::ifstream::badbit );
         try {
-        // and parse it
-        f >> hconfig;
-        // finished
-        f.close();
+            // and parse it
+            f >> hconfig;
+            // finished
+            f.close();
         } catch (const std::ifstream::failure& e) {
             throw HLibException ( "Exception opening/reading/closing file!!" );
         }
@@ -230,9 +236,9 @@ bool HGParser::data::iskey(const std::string &s) const {
 long HGParser::data::getIntValue( const std::string& key ) {
     if ( ! iskey(key) )
         throw 0;
-    
+
     std::istringstream ss( this->operator [] ( key ) );
-    long result = 0;   
+    long result = 0;
     ss >> result;
     if (!ss.eof())
         throw 1;
@@ -243,7 +249,7 @@ float HGParser::data::getFloatValue( const std::string& key ) {
     if ( ! iskey(key) ) {
         throw 0.0;
     }
-    
+
     std::istringstream ss( this->operator [] ( key ) );
     std::size_t nFound = ss.str().find(",");
     std::string tm = ss.str();
@@ -252,7 +258,7 @@ float HGParser::data::getFloatValue( const std::string& key ) {
         tm.replace ( nFound, 1 , "." );
         ss.clear(); ss.str(tm);
     }
-    
+
     float result;
     ss >> result;
     if (!ss.eof()) {

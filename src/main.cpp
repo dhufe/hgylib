@@ -44,8 +44,8 @@ int main ( int argc, const char* argv[] ) {
 
     std::cout << "Dimensions : ";
     for ( auto i = 0; i < pFile->nCoordinates; i++ ) {
-        if ( ( i - 1 ) < pFile->nCoordinates )
-            std::cout <<  pFile->pnDimension[i] << "x";
+        if ( i <  pFile->nCoordinates - 1  )
+            std::cout <<  pFile->pnDimension[i] << " x ";
         else
             std::cout << pFile->pnDimension[i] << std::endl;
     }
