@@ -92,5 +92,8 @@ int main ( int argc, const char* argv[] ) {
         std::cerr << "An error was reported : " << e.what() << std::endl;
     }
 
+   MatioWrapper wrapper ( "test.mat" );
+   wrapper.writeData ( pFile, pcData );
+
     return EXIT_SUCCESS;
 }

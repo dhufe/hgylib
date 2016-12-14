@@ -39,11 +39,17 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
 
             if ((*pIter).DataType != HGDataType::HGYVScan) {
                 for (auto y = 0; y < pDataInfo->pnDimension[1]; y++) {
-
                     for (auto x = 0; x < pDataInfo->pnDimension[0]; x++) {
-//                        pSig [ pDataInfo->pnDimension[0] * y + x ] = (double) ( pcData [ (*pIter).nDataOffset + pDataInfo->pnDimension¢[0] * y + x ] ) ;
+                        pSig  [ pDataInfo->pnDimension[0] * y + x ] = (double) ( pcData [ (*pIter).nDataOffset + pDataInfo->pnDimension[0] * y + x ] ) ;
                     }
-
+                }
+            } else if ( (*pIter).DataType == HGDataType::HGYVScan ) {
+                for ( auto z = 0; z < pDataInfo->pnDimension[2]; z++ ) {
+                    for (auto y = 0; y < pDataInfo->pnDimension[1]; y++) {
+                        for (auto x = 0; x < pDataInfo->pnDimension[0]; x++) {
+                            pSig  [ pDataInfo->pnDimension[0] * pDataInfo->pnDimension[1] * z +  pDataInfo->pnDimension[0] * y + x ] = (double) ( pcData [ (*pIter).nDataOffset + pDataInfo->pnDimension[0] * pDataInfo->pnDimension[1] * z + pDataInfo->pnDimension[0] * y + x ] ) ;
+                        }
+                    }
                 }
             }
 
