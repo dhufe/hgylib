@@ -33,7 +33,7 @@ int main ( int argc, const char* argv[] ) {
         szFileName = std::string(argv[1]);
 
     HGParser hp ( szFileName );
-    int16_t* pcData  = nullptr;
+    char* pcData  = nullptr;
     HGFileInfo* pFile = nullptr;
 
     try {
@@ -43,12 +43,6 @@ int main ( int argc, const char* argv[] ) {
         return EXIT_FAILURE;
     }
 
-    if (pFile->pDataTypes) {
-        for (std::vector<HGDataType>::iterator pIter = pFile->pDataTypes->begin(); pIter != pFile->pDataTypes->end(); ++pIter) {
-            std::cout << (int)((*pIter).DataType) << std::endl;
-        }
-    }
-
     std::cout << "Dimensions : ";
     for ( auto i = 0; i < pFile->nCoordinates; i++ ) {
         if ( i <  pFile->nCoordinates - 1  )
@@ -56,13 +50,38 @@ int main ( int argc, const char* argv[] ) {
         else
             std::cout << pFile->pnDimension[i] << std::endl;
     }
-    /*
-    std::cout << "Start      : " << pFile->pdStart[0]     << "x"        << pFile->pdStart[1]     << "x" << pFile->pdStart[2]     << std::endl;
-    std::cout << "Scale      : " << pFile->pdScale[0]     << "x"        << pFile->pdScale[1]     << "x" << pFile->pdScale[2]     << std::endl;
-    std::cout << "nSamples   : " << pFile->pnDimension[0] * pFile->pnDimension[1] * pFile->pnDimension[2] << std::endl;
-    */
+
+    std::cout << "Start : ";
+    for (auto i = 0; i < pFile->nCoordinates; i++) {
+        if (i <  pFile->nCoordinates - 1)
+            std::cout << pFile->pdStart[i] << " x ";
+        else
+            std::cout << pFile->pdStart[i] << std::endl;
+    }
+
+    std::cout << "Scaling : ";
+    for (auto i = 0; i < pFile->nCoordinates; i++) {
+        if (i <  pFile->nCoordinates - 1)
+            std::cout << pFile->pdScale[i] << " x ";
+        else
+            std::cout << pFile->pdScale[i] << std::endl;
+    }
+
+
+    if (pFile->pDataTypes) {
+
+        std::cout << std::endl << pFile->pDataTypes->size() << " different types of measurement data." << std::endl;
+        int i = 0;
+        for (std::vector<HGDataType>::iterator pIter = pFile->pDataTypes->begin(); pIter != pFile->pDataTypes->end(); ++pIter ) {
+            i++;
+            std::cout << "data set #" << i << " Datatype : " << (*pIter).toString() << " DataOffset : " << (*pIter).nDataOffset << " Size : " << (*pIter).nBytes << " bytes" << std::endl;
+        }
+    }
+
+    std::cout << "total size of data region : " << pFile->nBytes << " Bytes" << std::endl;
+
     try {
-        pcData = new int16_t [ pFile->nSamples ] ;
+        pcData = new char [ pFile->nBytes ] ;
     } catch (std::bad_alloc) {
         std::cerr << "unable to allocate memory!" << std::endl;
     }

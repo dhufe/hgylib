@@ -10,6 +10,12 @@
 typedef SSIZE_T ssize_t;
 #endif
 
+static const char *HGDataTypeStr[] = {
+    "HGYVScan",
+    "HGYCScan",
+    "HGYDScan"
+};
+
 struct HGDataType {
 
     enum eDataType {
@@ -22,14 +28,22 @@ struct HGDataType {
         : DataType( _type )
         , nBytes( 0 )
         , nDataOffset( 0 )
-        , nCoordniates( 0 )
     {
 
     }
 
+    std::string toString( void )  const {
+        return HGDataTypeStr[ DataType ];
+    }
+
+    std::string toString( eDataType _type )  const {
+        return HGDataTypeStr[_type];
+    }
+
     ssize_t nBytes;
     ssize_t nDataOffset;
-    size_t  nCoordniates;
+    double  dScaling;
+    
     eDataType  DataType;
 };
 
@@ -40,8 +54,7 @@ struct HGFileInfo {
     std::string             *pUnits;
     char	            	*pcUnits;
     ssize_t                 nSamples;
-    double                  *pdMeasurementScale;
-    double		            dAmpScaling;
+    ssize_t                 nBytes;
     size_t                  nCoordinates;
     ssize_t		            nDataOffset;
     std::vector<HGDataType>* pDataTypes;
@@ -51,7 +64,7 @@ class HGParser {
     public:
         explicit HGParser   ( const std::string& szFileName );
         void     parseFile  ( HGFileInfo** ppFileInfo );
-        void     getData	( int16_t *piAmplitude, HGFileInfo**);
+        void     getData	( char *pcAmplitude, HGFileInfo**);
         virtual ~HGParser   ( void );
 
     private:
@@ -62,6 +75,7 @@ class HGParser {
                 bool    iskey           ( const std::string& s ) const;
                 long    getIntValue     ( const std::string& key );
                 float   getFloatValue   ( const std::string& key );
+                double  getDoubleValue  ( const std::string& key );
                 std::string getStringValue(const std::string& key );
         };
 
