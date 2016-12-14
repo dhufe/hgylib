@@ -21,7 +21,8 @@
 #ifndef __MATIO_WRAPPER_H__
 #define __MATIO_WRAPPER_H__
 
-#include <matio_private.h>
+#include <matio.h>
+//#include <matio_private.h>
 #include <hglib.h>
 
 class MatioWrapper {

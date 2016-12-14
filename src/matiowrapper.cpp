@@ -20,8 +20,8 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
 
 
     pMat = Mat_CreateVer(szFileName.c_str() , NULL, MAT_FT_MAT73);
-    
-    if (pMat == NULL) 
+
+    if (pMat == NULL)
         return false;
 
     // size of matrices
@@ -41,7 +41,7 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
                 for (auto y = 0; y < pDataInfo->pnDimension[1]; y++) {
 
                     for (auto x = 0; x < pDataInfo->pnDimension[0]; x++) {
-                        pSig[ pos ] = 
+//                        pSig [ pDataInfo->pnDimension[0] * y + x ] = (double) ( pcData [ (*pIter).nDataOffset + pDataInfo->pnDimension¢[0] * y + x ] ) ;
                     }
 
                 }
@@ -55,6 +55,6 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
             pSig = NULL;
         }
     }
-    
+
 
 }

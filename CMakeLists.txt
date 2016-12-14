@@ -5,7 +5,7 @@ PROJECT ( hgyparser )
 file (GLOB PROJECT_SOURCES  "src/*.cpp")
 file (GLOB PROJECT_HEADERS  "inc/*.h")
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 FIND_PACKAGE(Matio REQUIRED)
 
@@ -38,6 +38,7 @@ ADD_EXECUTABLE(
     ${PROJECT_HEADERS}
     )
 
+IF (MSVC)
 TARGET_LINK_LIBRARIES (
     hgyparser
     debug
@@ -47,6 +48,13 @@ TARGET_LINK_LIBRARIES (
     ${LIBMATIO_LIBRARIES}
     hg
     )
+ELSE (MSVC)
+ TARGET_LINK_LIBRARIES (
+    hgyparser
+    ${LIBMATIO_LIBRARIES}
+    hg
+    )
+ENDIF(MSVC)
 
 ADD_DEPENDENCIES (
     hgyparser
