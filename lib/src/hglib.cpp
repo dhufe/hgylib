@@ -61,9 +61,9 @@ std::ostream& operator << ( std::ostream& outs, const HGParser::data& d ) {
 }
 
 
-    HGParser::HGParser ( const std::string& szFileName )
+ HGParser::HGParser ( const std::string& szFileName )
     : szHFileName( szFileName )
-      , nDataOffset(0)
+    , nDataOffset(0)
 {
 
 }
@@ -83,15 +83,33 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
     if ( *ppFileInfo == nullptr ) {
         try {
             (*ppFileInfo) = new HGFileInfo();
+            (*ppFileInfo)->pDataTypes = nullptr;
         }catch ( const std::bad_alloc& e ) {
             throw HLibException ( "Bad allocation exception of FileInfo!" );
         }
     }
 
-    if ( hconfig.getStringValue ( "DataType" ).compare ( "V" ) == 0 ) {
-        (*ppFileInfo)->eType = HGYVolumeScan;
-    } else {
-        (*ppFileInfo)->eType = HGYScan;
+    std::string szDataType = hconfig.getStringValue("DataType");
+    std::string::iterator sIter; 
+
+    if ((*ppFileInfo)->pDataTypes == nullptr) {
+        (*ppFileInfo)->pDataTypes = new std::vector<HGDataType>();
+    }
+
+    for (sIter = szDataType.begin(); sIter != szDataType.end(); ++sIter) {
+        switch (*sIter) {
+            case 'V':
+                (*ppFileInfo)->pDataTypes->push_back(HGDataType(HGDataType::HGYVScan));
+                break;
+            case 'C':
+                (*ppFileInfo)->pDataTypes->push_back(HGDataType(HGDataType::HGYCScan));
+                break;
+            case 'D':
+                (*ppFileInfo)->pDataTypes->push_back(HGDataType(HGDataType::HGYDScan));
+                break;
+            default:
+                break;
+        }
     }
 
     // get data offset
@@ -116,10 +134,6 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
         }
 
     }
-
-#if _DEBUG
-    std::cout << "number of coordinates : " << (*ppFileInfo)->nCoordinates;
-#endif
 
     // adjust file information
     try {
@@ -204,7 +218,7 @@ void HGParser::getData( int16_t *piAmplitude, HGFileInfo** ppFileInfo ) {
     g.exceptions ( std::ifstream::badbit );
     try {
         g.seekg ( (*ppFileInfo)->nDataOffset);
-        g.read((char*)(piAmplitude), (*ppFileInfo)->nSamples * sizeof (int16_t) );
+        g.read((char*)(piAmplitude), (*ppFileInfo)->nSamples * sizeof(int16_t));
         g.close();
     } catch ( const std::ifstream::failure& e) {
         throw HLibException ( "Exception opening/reading/closing file!!" );

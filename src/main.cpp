@@ -35,11 +35,18 @@ int main ( int argc, const char* argv[] ) {
     HGParser hp ( szFileName );
     int16_t* pcData  = nullptr;
     HGFileInfo* pFile = nullptr;
+
     try {
         hp.parseFile(&pFile);
     } catch ( const HLibException& e ) {
         std::cerr << "An error was reported : " << e.what() << std::endl;
         return EXIT_FAILURE;
+    }
+
+    if (pFile->pDataTypes) {
+        for (std::vector<HGDataType>::iterator pIter = pFile->pDataTypes->begin(); pIter != pFile->pDataTypes->end(); ++pIter) {
+            std::cout << (int)((*pIter).DataType) << std::endl;
+        }
     }
 
     std::cout << "Dimensions : ";
