@@ -2,19 +2,22 @@ cmake_minimum_required(VERSION 2.8)
 
 PROJECT ( hgyparser )
 
-#SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ../bin)
-
 file (GLOB PROJECT_SOURCES  "src/*.cpp")
 file (GLOB PROJECT_HEADERS  "inc/*.h")
 
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
+FIND_PACKAGE(Matio REQUIRED)
+
 ADD_DEFINITIONS( -D_USE_MATH_DEFINES )
 
-ADD_SUBDIRECTORY (	lib	)
+ADD_SUBDIRECTORY ( deps )
 
 INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_BINARY_DIR}
     ${PROJECT_SOURCE_DIR}
-    "${PROJECT_SOURCE_DIR}/lib/inc"
+    "${PROJECT_SOURCE_DIR}/deps/hlib/inc"
+    ${LIBMATIO_INCLUDE_DIR}
     "${PROJECT_SOURCE_DIR}/inc"
     )
 
@@ -32,10 +35,16 @@ ENDIF (MSVC)
 ADD_EXECUTABLE(
     hgyparser
     ${PROJECT_SOURCES}
+    ${PROJECT_HEADERS}
     )
 
 TARGET_LINK_LIBRARIES (
     hgyparser
+    debug
+    ${LIBMATIO_LIBRARIESD}
+    hg
+    optimized
+    ${LIBMATIO_LIBRARIES}
     hg
     )
 
