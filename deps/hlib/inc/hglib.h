@@ -41,9 +41,10 @@ struct HGDataType {
     }
 
     ssize_t nBytes;
+    size_t nDataWordSize;
     ssize_t nDataOffset;
     double  dScaling;
-
+    std::string szUnit;
     eDataType  DataType;
 };
 
