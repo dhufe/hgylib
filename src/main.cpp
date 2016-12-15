@@ -23,6 +23,7 @@
 #include <hglib.h>
 #include <inttypes.h>
 #include <hlibexeception.h>
+#include <matiowrapper.h>
 
 int main ( int argc, const char* argv[] ) {
 
@@ -69,7 +70,6 @@ int main ( int argc, const char* argv[] ) {
 
 
     if (pFile->pDataTypes) {
-
         std::cout << std::endl << pFile->pDataTypes->size() << " different types of measurement data." << std::endl;
         int i = 0;
         for (std::vector<HGDataType>::iterator pIter = pFile->pDataTypes->begin(); pIter != pFile->pDataTypes->end(); ++pIter ) {
@@ -91,6 +91,9 @@ int main ( int argc, const char* argv[] ) {
     } catch ( const HLibException& e ) {
         std::cerr << "An error was reported : " << e.what() << std::endl;
     }
+
+   MatioWrapper wrapper ( "test.mat" );
+   wrapper.writeData ( pFile, pcData );
 
     return EXIT_SUCCESS;
 }

@@ -24,7 +24,7 @@ struct HGDataType {
         HGYDScan = 0x02
     };
 
-    HGDataType::HGDataType( eDataType _type ) 
+    HGDataType( eDataType _type )
         : DataType( _type )
         , nBytes( 0 )
         , nDataOffset( 0 )
@@ -41,9 +41,10 @@ struct HGDataType {
     }
 
     ssize_t nBytes;
+    size_t nDataWordSize;
     ssize_t nDataOffset;
     double  dScaling;
-    
+    std::string szUnit;
     eDataType  DataType;
 };
 
@@ -86,7 +87,7 @@ class HGParser {
         ssize_t nDataOffset;
     private:
         void parseTextPart ( void );
-        
+
 };
 
 

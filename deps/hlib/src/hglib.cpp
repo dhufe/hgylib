@@ -203,14 +203,19 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
         try {
             ss << "Measure" << i + 1 << ".DataWordSize";
             nByteSize = hconfig.getIntValue(ss.str());
+            (*ppFileInfo)->pDataTypes->at(i).nDataWordSize = nByteSize;
             ss.clear(); ss.str("");
             ss << "Measure" << i + 1 << ".RelDataOffset";
+            ss.clear(); ss.str("");
             // getting relative data offset
             (*ppFileInfo)->pDataTypes->at(i).nDataOffset = hconfig.getIntValue(ss.str());
             // obtain number of bytes by multiplying number of samples with the number of bytes per data word
             (*ppFileInfo)->pDataTypes->at(i).nBytes = (*ppFileInfo)->nSamples * nByteSize;
             // obtain culmulative number of bytes for the whole file
             (*ppFileInfo)->nBytes += (*ppFileInfo)->pDataTypes->at(i).nBytes;
+            ss.clear(); ss.str("");
+            ss << "Measure" << i + 1 << ".Unit";
+            (*ppFileInfo)->pDataTypes->at(i).szUnit = std::string(hconfig.getStringValue(ss.str()));
             ss.clear(); ss.str("");
             ss << "Measure" << i + 1 << ".ScaleFactor";
             (*ppFileInfo)->pDataTypes->at(i).dScaling = hconfig.getDoubleValue(ss.str());
