@@ -65,6 +65,7 @@ int ConArgs::parse_arguments_long ( int argc, char* argv[], const char* cOptions
 void ConArgs::usage ( void ) {
     std::cout << std::endl;
     std::cout << szApplicationName << std::endl;
+    std::cout << "Copyright © Daniel Kotschate (dkotscha)" << std::endl;
     std::cout << std::endl;
     std::cout << "Version info:" << std::endl;
     std::cout << "  last commit: " << VersionInfo::GIT_DATE << std::endl;
