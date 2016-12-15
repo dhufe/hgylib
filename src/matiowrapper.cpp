@@ -95,7 +95,7 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
 
             ss << (*pIter).toString().c_str() << "_" << nIndex;
 
-            pMatVar = Mat_VarCreate( ss.str().c_str() , MAT_C_DOUBLE, MAT_T_DOUBLE, pDataInfo->nCoordinates, pSizes, pSig, MAT_F_DONT_COPY_DATA);
+            pMatVar = Mat_VarCreate( ss.str().c_str() , MAT_C_DOUBLE, MAT_T_DOUBLE, (int) (pDataInfo->nCoordinates), pSizes, pSig, MAT_F_DONT_COPY_DATA);
             ss.clear(); ss.str("");
             Mat_VarWrite(pMat, pMatVar, MAT_COMPRESSION_ZLIB);
             Mat_VarFree(pMatVar);
