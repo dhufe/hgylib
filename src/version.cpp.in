@@ -1,0 +1,5 @@
+#include <version.h>
+
+const std::string VersionInfo::GIT_SHA1 = "@GIT_SHA1@";
+const std::string VersionInfo::GIT_DATE = "@GIT_DATE@";
+const std::string VersionInfo::GIT_COMMIT_SUBJECT = "@GIT_COMMIT_SUBJECT@";

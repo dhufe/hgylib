@@ -205,10 +205,10 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
             nByteSize = hconfig.getIntValue(ss.str());
             (*ppFileInfo)->pDataTypes->at(i).nDataWordSize = nByteSize;
             ss.clear(); ss.str("");
-            ss << "Measure" << i + 1 << ".RelDataOffset";
-            ss.clear(); ss.str("");
+            ss << "Measure" << i + 1 << ".RelDataOffset";           
             // getting relative data offset
             (*ppFileInfo)->pDataTypes->at(i).nDataOffset = hconfig.getIntValue(ss.str());
+            ss.clear(); ss.str("");
             // obtain number of bytes by multiplying number of samples with the number of bytes per data word
             (*ppFileInfo)->pDataTypes->at(i).nBytes = (*ppFileInfo)->nSamples * nByteSize;
             // obtain culmulative number of bytes for the whole file
