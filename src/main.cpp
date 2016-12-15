@@ -25,6 +25,7 @@
 #include <hlibexeception.h>
 #include <console_arg.h>
 #include <matiowrapper.h>
+#include <version.h>
 
 int main ( int argc, char* argv[] ) {
 
@@ -46,6 +47,13 @@ int main ( int argc, char* argv[] ) {
     }
     else {
 
+        std::cout << pConfigArgs->szApplicationName << std::endl;
+        std::cout << std::endl;
+        std::cout << "Version info:" << std::endl;
+        std::cout << "  last commit: " << VersionInfo::GIT_DATE << std::endl;
+        std::cout << "  commit rev: " << VersionInfo::GIT_SHA1 << std::endl;
+        std::cout << "  commig msg: " << VersionInfo::GIT_COMMIT_SUBJECT << std::endl;
+        std::cout << std::endl << std::endl;
 
         HGParser hp(pConfigArgs->szInputFileName);
         char* pcData = nullptr;
