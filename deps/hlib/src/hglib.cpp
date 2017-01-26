@@ -1,3 +1,24 @@
+/**
+ *       @file  hglib.cpp
+ *      @brief
+ *
+ * Detailed description starts here.
+ *
+ *     @author  Daniel Kotschate (daniel), daniel@d3v0.de
+ *
+ *   @internal
+ *     Created  26/01/17
+ *    Revision  ---
+ *    Compiler  gcc/g++
+ *     Company  daniel@d3v0.de
+ *   Copyright  Copyright (c) 2017, Daniel Kotschate
+ *
+ * This source code is released for free distribution under the terms of the
+ * GNU General Public License as published by the Free Software Foundation.
+ * =====================================================================================
+ */
+
+
 #include <hglib.h>
 #include <fstream>
 #include <sstream>
@@ -90,7 +111,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
     }
 
     std::string szDataType = hconfig.getStringValue("DataType");
-    std::string::iterator sIter; 
+    std::string::iterator sIter;
 
     if ((*ppFileInfo)->pDataTypes == nullptr) {
         (*ppFileInfo)->pDataTypes = new std::vector<HGDataType>();
@@ -142,7 +163,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
         (*ppFileInfo)->pdStart = new double [ (*ppFileInfo)->nCoordinates ];
         (*ppFileInfo)->pUnits = new std::string [ (*ppFileInfo)->nCoordinates ];
         (*ppFileInfo)->pcUnits = new char[(*ppFileInfo)->nCoordinates];
-        
+
     } catch ( const std::bad_alloc& e ) {
         throw HLibException ( "Bad allocation exception of FileInfo attributes!" );
     }
@@ -205,7 +226,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
             nByteSize = hconfig.getIntValue(ss.str());
             (*ppFileInfo)->pDataTypes->at(i).nDataWordSize = nByteSize;
             ss.clear(); ss.str("");
-            ss << "Measure" << i + 1 << ".RelDataOffset";           
+            ss << "Measure" << i + 1 << ".RelDataOffset";
             // getting relative data offset
             (*ppFileInfo)->pDataTypes->at(i).nDataOffset = hconfig.getIntValue(ss.str());
             ss.clear(); ss.str("");
@@ -234,7 +255,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
 void HGParser::getData( char *pcAmplitude, HGFileInfo** ppFileInfo ) {
 
     if (pcAmplitude == nullptr)
-        return;  
+        return;
     // read data
     std::ifstream g( szHFileName.c_str() , std::ifstream::binary );
     g.exceptions ( std::ifstream::badbit );

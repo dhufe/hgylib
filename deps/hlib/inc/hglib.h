@@ -1,3 +1,24 @@
+/**
+ *       @file  hglib.h
+ *      @brief
+ *
+ * Detailed description starts here.
+ *
+ *     @author  Daniel Kotschate (daniel), daniel@d3v0.de
+ *
+ *   @internal
+ *     Created  26/01/17
+ *    Revision  ---
+ *    Compiler  gcc/g++
+ *     Company  daniel@d3v0.de
+ *   Copyright  Copyright (c) 2017, Daniel Kotschate
+ *
+ * This source code is released for free distribution under the terms of the
+ * GNU General Public License as published by the Free Software Foundation.
+ * =====================================================================================
+ */
+
+
 #ifndef __HG_LIB_H__
 #define __HG_LIB_H__
 
