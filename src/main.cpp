@@ -48,7 +48,7 @@ int main ( int argc, char* argv[] ) {
         std::cout << std::endl;
         std::cout << pConfigArgs->szApplicationName << std::endl;
         std::cout << std::endl;
-        std::cout << "Copyright © Daniel Kotschate (dkotscha)" << std::endl;
+        std::cout << "Copyright (c) Daniel Kotschate (dkotscha)" << std::endl;
         std::cout << std::endl;
         std::cout << "Version info:" << std::endl;
         std::cout << "  last commit: " << VersionInfo::GIT_DATE << std::endl;

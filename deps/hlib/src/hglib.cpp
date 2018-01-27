@@ -218,7 +218,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
     }
     ss.clear(); ss.str("");
     unsigned int nByteSize = 0;
-    ssize_t nRelDataOffset = 0;
+    
     // get information about different measurement data sets
     for (size_t i = 0; i < (*ppFileInfo)->pDataTypes->size(); i++) {
         try {

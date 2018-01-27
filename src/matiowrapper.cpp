@@ -2,9 +2,9 @@
 #include <sstream>
 
 MatioWrapper::MatioWrapper(const std::string& _FileName)
-    : szFileName(_FileName)
-    , pMat(NULL)
+    : pMat(NULL)
     , pMatVar(NULL)
+    , szFileName(_FileName)
 {
 
 }
