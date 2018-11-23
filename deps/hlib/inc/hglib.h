@@ -1,24 +1,3 @@
-/**
- *       @file  hglib.h
- *      @brief
- *
- * Detailed description starts here.
- *
- *     @author  Daniel Kotschate (daniel), daniel@d3v0.de
- *
- *   @internal
- *     Created  26/01/17
- *    Revision  ---
- *    Compiler  gcc/g++
- *     Company  daniel@d3v0.de
- *   Copyright  Copyright (c) 2017, Daniel Kotschate
- *
- * This source code is released for free distribution under the terms of the
- * GNU General Public License as published by the Free Software Foundation.
- * =====================================================================================
- */
-
-
 #ifndef __HG_LIB_H__
 #define __HG_LIB_H__
 
@@ -46,9 +25,9 @@ struct HGDataType {
     };
 
     HGDataType( eDataType _type )
-        : nBytes( 0 )
+        : DataType( _type )
+        , nBytes( 0 )
         , nDataOffset( 0 )
-        , DataType( _type )
     {
 
     }
@@ -84,7 +63,7 @@ struct HGFileInfo {
 
 class HGParser {
     public:
-        explicit HGParser   ( const std::string& szFileName );
+        explicit HGParser   ( const std::string& szFileName, uint8_t exportFlag = 0 );
         void     parseFile  ( HGFileInfo** ppFileInfo );
         void     getData	( char *pcAmplitude, HGFileInfo**);
         virtual ~HGParser   ( void );
@@ -106,8 +85,31 @@ class HGParser {
 
         data hconfig;
         ssize_t nDataOffset;
+        uint8_t nExport;
+    
     private:
+
+        /**
+        * Removes the extension described by filename.
+        *
+        * @author Daniel Kotschate
+        * @date 1/18/2016
+        *
+        * @tparam T Generic type parameter.
+        * @param filename Filename of the file.
+        *
+        * @return A T.
+        */
+
+        template<class T>
+        static T remove_extension(T const & filename)
+        {
+            typename T::size_type const p(filename.find_last_of('.'));
+            return p > 0 && p != T::npos ? filename.substr(0, p) : filename;
+        }
+
         void parseTextPart ( void );
+        void printExportTable( HGFileInfo** );
 
 };
 

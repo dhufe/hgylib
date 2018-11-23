@@ -4,7 +4,7 @@
  *
  * Detailed description starts here.
  *
- *     @author  Daniel Kotschate (daniel), daniel@d3v0.de
+ *     @author  Daniel Kotschate (daniel), daniel@epyx-online.de
  *
  *   @internal
  *     Created  29.04.2016
@@ -35,8 +35,10 @@ int main ( int argc, char* argv[] ) {
     static struct option long_options[] =
     {
         { "verbose", no_argument, &(pConfigArgs->verbose_flag), 1 },
-        { "input", required_argument, 0, 'i' },
-        { "output", required_argument, 0, 'o' },
+        { "export", no_argument, &(pConfigArgs->export_flag), 1 },
+        { "infile", required_argument, 0, 'i' },
+        { "outfile", required_argument, 0, 'o' },
+        //{ "logfile", optional_argument, 0, 'l' },
         { 0, 0, 0, 0 }
     };
 
@@ -48,7 +50,7 @@ int main ( int argc, char* argv[] ) {
         std::cout << std::endl;
         std::cout << pConfigArgs->szApplicationName << std::endl;
         std::cout << std::endl;
-        std::cout << "Copyright (c) Daniel Kotschate (dkotscha)" << std::endl;
+        std::cout << "Copyright © Daniel Kotschate (dkotscha)" << std::endl;
         std::cout << std::endl;
         std::cout << "Version info:" << std::endl;
         std::cout << "  last commit: " << VersionInfo::GIT_DATE << std::endl;
@@ -56,7 +58,7 @@ int main ( int argc, char* argv[] ) {
         std::cout << "  commig msg: " << VersionInfo::GIT_COMMIT_SUBJECT << std::endl;
         std::cout << std::endl << std::endl;
 
-        HGParser hp(pConfigArgs->szInputFileName);
+        HGParser hp(pConfigArgs->szInputFileName, pConfigArgs->export_flag );
         char* pcData = nullptr;
         HGFileInfo* pFile = nullptr;
 

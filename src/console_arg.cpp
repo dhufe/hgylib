@@ -65,7 +65,7 @@ int ConArgs::parse_arguments_long ( int argc, char* argv[], const char* cOptions
 void ConArgs::usage ( void ) {
     std::cout << std::endl;
     std::cout << szApplicationName << std::endl;
-    std::cout << "Copyright (c) Daniel Kotschate (dkotscha)" << std::endl;
+    std::cout << "Copyright © Daniel Kotschate (dkotscha)" << std::endl;
     std::cout << std::endl;
     std::cout << "Version info:" << std::endl;
     std::cout << "  last commit: " << VersionInfo::GIT_DATE << std::endl;
@@ -73,10 +73,12 @@ void ConArgs::usage ( void ) {
     std::cout << "  commig msg: " << VersionInfo::GIT_COMMIT_SUBJECT << std::endl;
     std::cout << std::endl << std::endl;
     std::cout << "Usage: "<< szApplicationName << " [-cil]" << std::endl << std::endl;
-    std::cout << "  -i (--input)          input filename (HILGUS format)" << std::endl;
-    std::cout << "  -o (--output)         output filename (MATLAB format)" << std::endl;
+    std::cout << "  -i (--infile)         input filename (HGY format)" << std::endl;
+    std::cout << "  -c (--config)         output filename (MATLAB format)" << std::endl;
     std::cout << "                        time, frequency, vrms" << std::endl;
     std::cout << std::endl;
+    //std::cout << "  -l (--logfile)        logfile" << std::endl;
+    //std::cout << std::endl;
     std::cout << "     --verbose          verbose output information" << std::endl;
     std::cout << std::endl;
 }

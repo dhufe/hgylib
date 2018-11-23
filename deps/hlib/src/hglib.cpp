@@ -1,24 +1,3 @@
-/**
- *       @file  hglib.cpp
- *      @brief
- *
- * Detailed description starts here.
- *
- *     @author  Daniel Kotschate (daniel), daniel@d3v0.de
- *
- *   @internal
- *     Created  26/01/17
- *    Revision  ---
- *    Compiler  gcc/g++
- *     Company  daniel@d3v0.de
- *   Copyright  Copyright (c) 2017, Daniel Kotschate
- *
- * This source code is released for free distribution under the terms of the
- * GNU General Public License as published by the Free Software Foundation.
- * =====================================================================================
- */
-
-
 #include <hglib.h>
 #include <fstream>
 #include <sstream>
@@ -82,9 +61,10 @@ std::ostream& operator << ( std::ostream& outs, const HGParser::data& d ) {
 }
 
 
- HGParser::HGParser ( const std::string& szFileName )
+ HGParser::HGParser ( const std::string& szFileName, uint8_t nExport )
     : szHFileName( szFileName )
     , nDataOffset(0)
+    , nExport(nExport)
 {
 
 }
@@ -111,7 +91,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
     }
 
     std::string szDataType = hconfig.getStringValue("DataType");
-    std::string::iterator sIter;
+    std::string::iterator sIter; 
 
     if ((*ppFileInfo)->pDataTypes == nullptr) {
         (*ppFileInfo)->pDataTypes = new std::vector<HGDataType>();
@@ -163,7 +143,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
         (*ppFileInfo)->pdStart = new double [ (*ppFileInfo)->nCoordinates ];
         (*ppFileInfo)->pUnits = new std::string [ (*ppFileInfo)->nCoordinates ];
         (*ppFileInfo)->pcUnits = new char[(*ppFileInfo)->nCoordinates];
-
+        
     } catch ( const std::bad_alloc& e ) {
         throw HLibException ( "Bad allocation exception of FileInfo attributes!" );
     }
@@ -218,7 +198,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
     }
     ss.clear(); ss.str("");
     unsigned int nByteSize = 0;
-    
+    ssize_t nRelDataOffset = 0;
     // get information about different measurement data sets
     for (size_t i = 0; i < (*ppFileInfo)->pDataTypes->size(); i++) {
         try {
@@ -226,7 +206,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
             nByteSize = hconfig.getIntValue(ss.str());
             (*ppFileInfo)->pDataTypes->at(i).nDataWordSize = nByteSize;
             ss.clear(); ss.str("");
-            ss << "Measure" << i + 1 << ".RelDataOffset";
+            ss << "Measure" << i + 1 << ".RelDataOffset";           
             // getting relative data offset
             (*ppFileInfo)->pDataTypes->at(i).nDataOffset = hconfig.getIntValue(ss.str());
             ss.clear(); ss.str("");
@@ -250,12 +230,75 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
             }
         }
     }
+
+    if (nExport) {
+        printExportTable( ppFileInfo );
+    }
+}
+
+void HGParser::printExportTable(HGFileInfo** ppFileInfo ) {
+    
+    std::string szMDFileName = remove_extension(szHFileName) + std::string(".md");
+    std::ofstream oFile(szMDFileName);
+
+    // print header
+    oFile << "| **Parameter**  | **Value**  |" << std::endl;
+    oFile << "| :------------- | ---------: |" << std::endl;
+    for (size_t i = 0; i < (*ppFileInfo)->nCoordinates; ++i) {
+        switch (i){
+            case 0:
+                oFile << "| dy              " << "| " << (*ppFileInfo)->pdScale[i] * 1e3 << " mm |" << std::endl;
+                break;
+
+            case 1:
+                oFile << "| dx              " << "| " << (*ppFileInfo)->pdScale[i] * 1e3 << " mm |" << std::endl;
+                break;
+            default:
+                break;
+        }
+    }
+    
+
+    // print data
+    try {
+        oFile << "| Samplerate      " << "| " << hconfig.getDoubleValue("MinSampleRate") * 1e-6 << " MHz  |" << std::endl;
+        oFile << "| Highpass        " << "| " << hconfig.getDoubleValue("HighPass") * 1e-3 << " kHz  |" << std::endl;
+        oFile << "| Lowpass         " << "| " << hconfig.getDoubleValue("LowPass") * 1e-3 << " kHz  |" << std::endl;
+        oFile << "| Pulses          " << "| " << hconfig.getStringValue("Pulses") << "  |" << std::endl;
+        oFile << "| User            " << "| " << hconfig.getStringValue("Comment 6") << "  |" << std::endl;
+        oFile << "| Comments        " << "| " << hconfig.getStringValue("Comment 7") << "  |" << std::endl;
+
+ /*       if (hconfig.getIntValue("Filter - Active") == 1) {
+
+        }
+        */
+        oFile << "| Pulsewidth      " << "| " << hconfig.getDoubleValue("PulseWidth") * 1e6 << " us |" << std::endl;
+        oFile << "| Averaging       " << "| " << hconfig.getStringValue("ScanLocalAveragingNr") << "  |" << std::endl;
+        oFile << "| Applied voltage " << "| " << hconfig.getStringValue("MinusdB") << " dB |" << std::endl;
+        oFile << "| Applied gain    " << "| " << hconfig.getStringValue("Gain") << " dB |" << std::endl;
+        oFile << "| Ascan    " << "| " << hconfig.getDoubleValue("DelayTime") * 1e6 << " - " 
+            << ( hconfig.getDoubleValue("ProofRange") + hconfig.getDoubleValue("DelayTime") ) * 1e6 << " us |" << std::endl;
+        oFile << "| Gate    " << "| " << hconfig.getDoubleValue("Gate1DelayTime")  * 1e6 << " - "
+            << (hconfig.getDoubleValue("Gate1DelayTime") + hconfig.getDoubleValue("Gate1RangeTime") )  * 1e6 << " us |" << std::endl;
+        oFile << "| Gate threshold | " << hconfig.getDoubleValue("Gate2LowerThreshold") << "% FSH |" << std::endl;
+
+        oFile.close();
+
+    } catch (int e) {
+        if (e == 0) {
+            throw HLibException("key isn't avaiable!");
+        }
+        else if (e == 1) {
+            throw HLibException("eof reached and no suitable key was found!");
+        }
+
+    }
 }
 
 void HGParser::getData( char *pcAmplitude, HGFileInfo** ppFileInfo ) {
 
     if (pcAmplitude == nullptr)
-        return;
+        return;  
     // read data
     std::ifstream g( szHFileName.c_str() , std::ifstream::binary );
     g.exceptions ( std::ifstream::badbit );

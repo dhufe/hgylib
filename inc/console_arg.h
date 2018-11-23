@@ -9,6 +9,7 @@ class ConArgs {
 
         ConArgs(void)
             : verbose_flag ( 0 )
+            , export_flag(0)
         {
 
         }
@@ -18,6 +19,7 @@ class ConArgs {
         std::string szApplicationName;
 
         int verbose_flag;   
+        int export_flag;
 
         /**
          * Creates the basename of an passed path.
