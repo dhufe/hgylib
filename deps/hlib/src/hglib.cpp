@@ -285,13 +285,15 @@ void HGParser::printExportTable(HGFileInfo** ppFileInfo ) {
         oFile.close();
 
     } catch (int e) {
+        /*
         if (e == 0) {
             throw HLibException("key isn't avaiable!");
         }
+
         else if (e == 1) {
             throw HLibException("eof reached and no suitable key was found!");
         }
-
+        */
     }
 }
 
@@ -368,31 +370,34 @@ float HGParser::data::getFloatValue( const std::string& key ) {
 }
 
 double HGParser::data::getDoubleValue(const std::string& key) {
+    double result = 0;
+    
     if (!iskey(key)) {
-        throw 0.0;
+        result = 0.0;
     }
+    else {
 
-    std::istringstream ss(this->operator [] (key));
-    std::size_t nFound = ss.str().find(",");
-    std::string tm = ss.str();
-    // replacing comma with dots for floating point variables
-    if (nFound != std::string::npos) {
-        tm.replace(nFound, 1, ".");
-        ss.clear(); ss.str(tm);
-    }
-
-    double result;
-    ss >> result;
-    if (!ss.eof()) {
-        throw 1.0;
+        std::istringstream ss(this->operator [] (key));
+        std::size_t nFound = ss.str().find(",");
+        std::string tm = ss.str();
+        // replacing comma with dots for floating point variables
+        if (nFound != std::string::npos) {
+            tm.replace(nFound, 1, ".");
+            ss.clear(); ss.str(tm);
+        }
+        ss >> result;
+        if (!ss.eof()) {
+            result = 1.0;
+        }
     }
     return result;
 }
 
 std::string HGParser::data::getStringValue(const std::string& key) {
-    if (!iskey(key))
-        throw std::string::npos;
-
-    std::istringstream ss(this->operator [] (key));
-    return ss.str();
+    if (!iskey(key)) {
+        return std::string("");
+    } else {
+        std::istringstream ss(this->operator [] (key));
+        return ss.str();
+    }
 }
