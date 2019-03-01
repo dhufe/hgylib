@@ -244,6 +244,28 @@ void HGParser::printExportTable(HGFileInfo** ppFileInfo ) {
     // print header
     oFile << "| **Parameter**  | **Value**  |" << std::endl;
     oFile << "| :------------- | ---------: |" << std::endl;
+
+    try {
+        std::string szDate = hconfig.getStringValue("StartDate");
+        oFile << "| Date      " << "| " << szDate << "  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        // e.what();
+    }
+
+    try {
+        std::string szTime = hconfig.getStringValue("StartTime");
+        oFile << "| Time      " << "| " << szTime << "  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        // e.what();
+    }
+
+    try {
+        double dSampleRate = hconfig.getDoubleValue("MinSampleRate") * 1e-6;
+        oFile << "| Samplerate      " << "| " << dSampleRate << " MHz  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        // e.what();
+    }
+
     for (size_t i = 0; i < (*ppFileInfo)->nCoordinates; ++i) {
         switch (i){
             case 0:
@@ -261,41 +283,108 @@ void HGParser::printExportTable(HGFileInfo** ppFileInfo ) {
 
     // print data
     try {
-        oFile << "| Samplerate      " << "| " << hconfig.getDoubleValue("MinSampleRate") * 1e-6 << " MHz  |" << std::endl;
-        std::cout << "Teststelle" << std::endl;
-        oFile << "| Highpass        " << "| " << hconfig.getDoubleValue("HighPass") * 1e-3 << " kHz  |" << std::endl;
-        oFile << "| Lowpass         " << "| " << hconfig.getDoubleValue("LowPass") * 1e-3 << " kHz  |" << std::endl;
-        oFile << "| Pulses          " << "| " << hconfig.getStringValue("Pulses") << "  |" << std::endl;
-        oFile << "| User            " << "| " << hconfig.getStringValue("Comment 6") << "  |" << std::endl;
-        oFile << "| Comments        " << "| " << hconfig.getStringValue("Comment 7") << "  |" << std::endl;
+        double dSampleRate = hconfig.getDoubleValue("MinSampleRate") * 1e-6;
+        oFile << "| Samplerate      " << "| " << dSampleRate << " MHz  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        // e.what();
+    }
 
- /*       if (hconfig.getIntValue("Filter - Active") == 1) {
+    try {
+        double dHighPass = hconfig.getDoubleValue("HighPass");
+        oFile << "| Highpass        " << "| " <<  dHighPass * 1e-3 << " kHz  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        //e.what();
+    }
 
-        }
-        */
-        oFile << "| Pulsewidth      " << "| " << hconfig.getDoubleValue("PulseWidth") * 1e6 << " us |" << std::endl;
-        oFile << "| Averaging       " << "| " << hconfig.getStringValue("ScanLocalAveragingNr") << "  |" << std::endl;
-        oFile << "| Applied voltage " << "| " << hconfig.getStringValue("MinusdB") << " dB |" << std::endl;
-        oFile << "| Applied gain    " << "| " << hconfig.getStringValue("Gain") << " dB |" << std::endl;
-        oFile << "| Ascan    " << "| " << hconfig.getDoubleValue("DelayTime") * 1e6 << " - "
-            << ( hconfig.getDoubleValue("ProofRange") + hconfig.getDoubleValue("DelayTime") ) * 1e6 << " us |" << std::endl;
-        oFile << "| Gate    " << "| " << hconfig.getDoubleValue("Gate1DelayTime")  * 1e6 << " - "
-            << (hconfig.getDoubleValue("Gate1DelayTime") + hconfig.getDoubleValue("Gate1RangeTime") )  * 1e6 << " us |" << std::endl;
-        oFile << "| Gate threshold | " << hconfig.getDoubleValue("Gate2LowerThreshold") << "% FSH |" << std::endl;
+    try {
+        double dLowPass = hconfig.getDoubleValue("LowPass") * 1e-3;
+        oFile << "| Lowpass         " << "| " << dLowPass << " kHz  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        //e.what();
+    }
 
+    try {
+        long nPulses = hconfig.getIntValue("Pulses");
+        oFile << "| Pulses          " << "| " <<  nPulses << "  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        //e.what();
+    }
+
+    try {
+        std::string szProject = hconfig.getStringValue("Comment 1");
+        oFile << "| Project            " << "| " << szProject << "  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        //e.what();
+    }
+
+    try {
+        std::string szUser = hconfig.getStringValue("Comment 6");
+        oFile << "| User            " << "| " << szUser << "  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        //e.what();
+    }
+
+    try {
+        std::string szUserComments = hconfig.getStringValue("Comment 7");
+        oFile << "| Comments        " << "| " << szUserComments << "  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        //e.what();
+    }
+
+    try {
+        double dPulseWidth = hconfig.getDoubleValue("PulseWidth") * 1e6;
+        oFile << "| Pulsewidth      " << "| " << dPulseWidth << " us |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        //e.what();
+    }
+
+    try {
+        long nAveraging = hconfig.getIntValue("ScanLocalAveragingNr");
+        oFile << "| Averaging       " << "| " << nAveraging << "  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        //e.what();
+    }
+
+    try {
+        double dAmplitude = hconfig.getDoubleValue("MinusdB");
+        oFile << "| Applied voltage " << "| " << dAmplitude << " dB |" << std::endl;
+    } catch ( HLibException ) {
+
+    }
+
+    try {
+        double dAppliedGain = hconfig.getDoubleValue("Gain");
+        oFile << "| Applied gain    " << "| " << dAppliedGain << " dB |" << std::endl;
+    } catch ( HLibException ) {
+
+    }
+
+    try {
+        double dStartTime = hconfig.getDoubleValue("DelayTime");
+        double dEndTime   = hconfig.getDoubleValue("ProofRange") + dStartTime;
+        oFile << "| Ascan    " << "| " << dStartTime * 1e6 << " - " << dEndTime * 1e6 << " us |" << std::endl;
+    } catch ( HLibException ) {
+
+    }
+
+    try {
+        double dStartGate1 = hconfig.getDoubleValue("Gate1DelayTime");
+        double dEndGate1   = hconfig.getDoubleValue("Gate1RangeTime") + dStartGate1;
+        oFile << "| Gate #1    " << "| " << dStartGate1 * 1e6 << " - " << dEndGate1 * 1e6 << " us |" << std::endl;
+    } catch ( HLibException ) {
+
+    }
+
+    try {
+        double dGate1Thresh = hconfig.getDoubleValue("Gate2LowerThreshold");
+        oFile << "| Gate #1 level | " << dGate1Thresh << "% FSH |" << std::endl;
+    } catch ( HLibException ) {
+
+    }
+
+    if (oFile.is_open() )
         oFile.close();
 
-    } catch (int e) {
-        /*
-        if (e == 0) {
-            throw HLibException("key isn't avaiable!");
-        }
-
-        else if (e == 1) {
-            throw HLibException("eof reached and no suitable key was found!");
-        }
-        */
-    }
 }
 
 void HGParser::getData( char *pcAmplitude, HGFileInfo** ppFileInfo ) {

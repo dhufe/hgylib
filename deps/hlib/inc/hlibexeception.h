@@ -14,7 +14,6 @@ class HLibException {
         }
     private:
         const char* pcMessage;
-
 };
 
 
