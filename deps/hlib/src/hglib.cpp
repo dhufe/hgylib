@@ -91,7 +91,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
     }
 
     std::string szDataType = hconfig.getStringValue("DataType");
-    std::string::iterator sIter; 
+    std::string::iterator sIter;
 
     if ((*ppFileInfo)->pDataTypes == nullptr) {
         (*ppFileInfo)->pDataTypes = new std::vector<HGDataType>();
@@ -143,7 +143,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
         (*ppFileInfo)->pdStart = new double [ (*ppFileInfo)->nCoordinates ];
         (*ppFileInfo)->pUnits = new std::string [ (*ppFileInfo)->nCoordinates ];
         (*ppFileInfo)->pcUnits = new char[(*ppFileInfo)->nCoordinates];
-        
+
     } catch ( const std::bad_alloc& e ) {
         throw HLibException ( "Bad allocation exception of FileInfo attributes!" );
     }
@@ -206,7 +206,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
             nByteSize = hconfig.getIntValue(ss.str());
             (*ppFileInfo)->pDataTypes->at(i).nDataWordSize = nByteSize;
             ss.clear(); ss.str("");
-            ss << "Measure" << i + 1 << ".RelDataOffset";           
+            ss << "Measure" << i + 1 << ".RelDataOffset";
             // getting relative data offset
             (*ppFileInfo)->pDataTypes->at(i).nDataOffset = hconfig.getIntValue(ss.str());
             ss.clear(); ss.str("");
@@ -237,7 +237,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
 }
 
 void HGParser::printExportTable(HGFileInfo** ppFileInfo ) {
-    
+
     std::string szMDFileName = remove_extension(szHFileName) + std::string(".md");
     std::ofstream oFile(szMDFileName);
 
@@ -257,11 +257,12 @@ void HGParser::printExportTable(HGFileInfo** ppFileInfo ) {
                 break;
         }
     }
-    
+
 
     // print data
     try {
         oFile << "| Samplerate      " << "| " << hconfig.getDoubleValue("MinSampleRate") * 1e-6 << " MHz  |" << std::endl;
+        std::cout << "Teststelle" << std::endl;
         oFile << "| Highpass        " << "| " << hconfig.getDoubleValue("HighPass") * 1e-3 << " kHz  |" << std::endl;
         oFile << "| Lowpass         " << "| " << hconfig.getDoubleValue("LowPass") * 1e-3 << " kHz  |" << std::endl;
         oFile << "| Pulses          " << "| " << hconfig.getStringValue("Pulses") << "  |" << std::endl;
@@ -276,7 +277,7 @@ void HGParser::printExportTable(HGFileInfo** ppFileInfo ) {
         oFile << "| Averaging       " << "| " << hconfig.getStringValue("ScanLocalAveragingNr") << "  |" << std::endl;
         oFile << "| Applied voltage " << "| " << hconfig.getStringValue("MinusdB") << " dB |" << std::endl;
         oFile << "| Applied gain    " << "| " << hconfig.getStringValue("Gain") << " dB |" << std::endl;
-        oFile << "| Ascan    " << "| " << hconfig.getDoubleValue("DelayTime") * 1e6 << " - " 
+        oFile << "| Ascan    " << "| " << hconfig.getDoubleValue("DelayTime") * 1e6 << " - "
             << ( hconfig.getDoubleValue("ProofRange") + hconfig.getDoubleValue("DelayTime") ) * 1e6 << " us |" << std::endl;
         oFile << "| Gate    " << "| " << hconfig.getDoubleValue("Gate1DelayTime")  * 1e6 << " - "
             << (hconfig.getDoubleValue("Gate1DelayTime") + hconfig.getDoubleValue("Gate1RangeTime") )  * 1e6 << " us |" << std::endl;
@@ -300,7 +301,7 @@ void HGParser::printExportTable(HGFileInfo** ppFileInfo ) {
 void HGParser::getData( char *pcAmplitude, HGFileInfo** ppFileInfo ) {
 
     if (pcAmplitude == nullptr)
-        return;  
+        return;
     // read data
     std::ifstream g( szHFileName.c_str() , std::ifstream::binary );
     g.exceptions ( std::ifstream::badbit );
@@ -336,46 +337,48 @@ bool HGParser::data::iskey(const std::string &s) const {
 }
 
 long HGParser::data::getIntValue( const std::string& key ) {
-    if ( ! iskey(key) )
-        throw 0;
-
-    std::istringstream ss( this->operator [] ( key ) );
     long result = 0;
-    ss >> result;
-    if (!ss.eof())
-        throw 1;
+    if ( ! iskey(key) ) {
+        throw HLibException ( "Key not found!" );
+    } else {
+        std::istringstream ss( this->operator [] ( key ) );
+        ss >> result;
+        if (!ss.eof()) {
+            throw HLibException ( "Key found but empty.");
+        }
+    }
     return result;
 }
 
 float HGParser::data::getFloatValue( const std::string& key ) {
+    float result = 0.0;
     if ( ! iskey(key) ) {
-        throw 0.0;
-    }
+        throw HLibException ( "Key not found!" );
+    } else {
 
-    std::istringstream ss( this->operator [] ( key ) );
-    std::size_t nFound = ss.str().find(",");
-    std::string tm = ss.str();
-    // replacing comma with dots for floating point variables
-    if ( nFound != std::string::npos ) {
-        tm.replace ( nFound, 1 , "." );
-        ss.clear(); ss.str(tm);
-    }
+        std::istringstream ss( this->operator [] ( key ) );
+        std::size_t nFound = ss.str().find(",");
+        std::string tm = ss.str();
+        // replacing comma with dots for floating point variables
+        if ( nFound != std::string::npos ) {
+            tm.replace ( nFound, 1 , "." );
+            ss.clear(); ss.str(tm);
+        }
 
-    float result;
-    ss >> result;
-    if (!ss.eof()) {
-        throw 1.0;
+        ss >> result;
+        if (!ss.eof()) {
+            throw HLibException ( "Key found but empty.");
+        }
     }
     return result;
 }
 
 double HGParser::data::getDoubleValue(const std::string& key) {
     double result = 0;
-    
-    if (!iskey(key)) {
-        result = 0.0;
-    }
-    else {
+
+    if ( ! iskey(key) ) {
+        throw HLibException ( "Key not found!" );
+    } else {
 
         std::istringstream ss(this->operator [] (key));
         std::size_t nFound = ss.str().find(",");
@@ -387,17 +390,20 @@ double HGParser::data::getDoubleValue(const std::string& key) {
         }
         ss >> result;
         if (!ss.eof()) {
-            result = 1.0;
+            throw HLibException ( "Key found but empty.");
         }
     }
     return result;
 }
 
 std::string HGParser::data::getStringValue(const std::string& key) {
+    std::string result = "";
     if (!iskey(key)) {
-        return std::string("");
+        throw HLibException ( "Key not found!" );
+        return result;
     } else {
         std::istringstream ss(this->operator [] (key));
-        return ss.str();
+        result = ss.str();
     }
+    return result;
 }
