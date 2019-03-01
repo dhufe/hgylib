@@ -84,6 +84,9 @@ ELSE (MSVC)
     ADD_DEFINITIONS(-std=gnu++11)
 ENDIF (MSVC)
 
+link_directories(
+    "/usr/local/lib"
+    )
 
 ADD_EXECUTABLE(
     hgyparser
@@ -108,6 +111,8 @@ ELSE (MSVC)
         hg
         )
 ENDIF(MSVC)
+
+
 
 ADD_DEPENDENCIES (
     hgyparser
