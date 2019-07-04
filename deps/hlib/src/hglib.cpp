@@ -1,5 +1,6 @@
 #include <hglib.h>
 #include <fstream>
+#include <algorithm>
 #include <sstream>
 #include <stdexcept>
 #include <hlibexeception.h>
@@ -37,7 +38,7 @@ std::istream& operator >> ( std::istream& ins, HGParser::data& d ) {
         // catching n_pos > size() out of range exception
         try {
             value = s.substr( begin, end - begin );
-        } catch ( const std::out_of_range& e ) {
+        } catch ( const std::out_of_range& /*e*/ ) {
 
         }
         // Insert the properly extracted (key, value) pair into the map
@@ -77,7 +78,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
     // parsing text part of tthe file
     try {
         parseTextPart();
-    } catch ( HLibException& e) {
+    } catch ( HLibException& /*e*/) {
         throw HLibException ( "Could not read file!");
     }
 
@@ -178,6 +179,10 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
                 (*ppFileInfo)->pcUnits[i] = 's';
                 (*ppFileInfo)->pdScale[i] = (*ppFileInfo)->pdScale[i] * 1e-6;
                 (*ppFileInfo)->pdStart[i] = (*ppFileInfo)->pdStart[i] * 1e-6;
+            } else if ((*ppFileInfo)->pUnits[i].compare("deg")) {
+                (*ppFileInfo)->pcUnits[i] = '°';
+                (*ppFileInfo)->pdScale[i] = (*ppFileInfo)->pdScale[i];
+                (*ppFileInfo)->pdStart[i] = (*ppFileInfo)->pdStart[i];
             }
 
             // clearing stringstream
@@ -259,27 +264,21 @@ void HGParser::printExportTable(HGFileInfo** ppFileInfo ) {
         // e.what();
     }
 
-    try {
-        double dSampleRate = hconfig.getDoubleValue("MinSampleRate") * 1e-6;
-        oFile << "| Samplerate      " << "| " << dSampleRate << " MHz  |" << std::endl;
-    } catch (HLibException /*&e*/) {
-        // e.what();
-    }
-
+    // get axis names and resolutions
+    std::stringstream ss;
     for (size_t i = 0; i < (*ppFileInfo)->nCoordinates; ++i) {
-        switch (i){
-            case 0:
-                oFile << "| dy              " << "| " << (*ppFileInfo)->pdScale[i] * 1e3 << " mm |" << std::endl;
-                break;
 
-            case 1:
-                oFile << "| dx              " << "| " << (*ppFileInfo)->pdScale[i] * 1e3 << " mm |" << std::endl;
-                break;
-            default:
-                break;
+        try {
+            ss << "Coord" << i + 1 << ".Name";
+            std::string szCoordName = hconfig.getStringValue(ss.str().c_str());
+            std::transform(szCoordName.begin(), szCoordName.end(), szCoordName.begin(), ::tolower);
+            oFile << "| d" << szCoordName << "              " << "| " << (*ppFileInfo)->pdScale[i] * 1e3 << " mm |" << std::endl;
+            ss.clear(); ss.str("");
+        }
+        catch (HLibException /*e*/) {
+
         }
     }
-
 
     // print data
     try {

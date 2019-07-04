@@ -42,6 +42,7 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
     double* pdScale = new double[pDataInfo->nCoordinates];
     double* pdSizes = new double[pDataInfo->nCoordinates];
     double* pnSizes = new double[pDataInfo->nCoordinates];
+    char*   pcUnits = new char[pDataInfo->nCoordinates];
     // struct dimensions
     size_t  dims_struct[2] = { 1, 1 };
     std::stringstream ss;
@@ -110,16 +111,18 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
     for (auto i = 0; i < pDataInfo->nCoordinates; i++) {
         pnSizes[i] = (double) (pDataInfo->pnDimension[i]);
         pdSizes[i] = (double)(pDataInfo->pdStart[i] + pDataInfo->pnDimension[i] * pDataInfo->pdScale[i]);
+        pcUnits[i] = pDataInfo->pcUnits[i];
     }
 
     pMatVar = Mat_VarCalloc();
-    matvar_t** ppMatStructVars = (matvar_t**)calloc(5, sizeof(matvar_t*));
+    matvar_t** ppMatStructVars = (matvar_t**)calloc(6, sizeof(matvar_t*));
 
     ppMatStructVars[0] = Mat_VarCreate("Scale", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, sDim, (void*)(pDataInfo->pdScale), 0);
     ppMatStructVars[1] = Mat_VarCreate("Start", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, sDim, (void*)(pDataInfo->pdStart), 0);
     ppMatStructVars[2] = Mat_VarCreate("Dimensions", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, sDim, (void*)(pnSizes), 0);
     ppMatStructVars[3] = Mat_VarCreate("Sizes", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, sDim, (void*)(pdSizes), 0);
-    ppMatStructVars[4] = NULL;
+    ppMatStructVars[4] = Mat_VarCreate("Units", MAT_C_CHAR, MAT_T_UTF16, 2, sDim, (void*)(pcUnits), 0);
+    ppMatStructVars[5] = NULL;
 
     matvar_t*  pMatStruct = Mat_VarCreate("recparm", MAT_C_STRUCT, MAT_T_STRUCT, 2, dims_struct, ppMatStructVars, 0);
     Mat_VarWrite(pMat, pMatStruct, MAT_COMPRESSION_ZLIB);
@@ -130,6 +133,7 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
     delete[] pdScale;
     delete[] pdSizes;
     delete[] pnSizes;
+    delete[] pcUnits;
 
     return true;
 }
