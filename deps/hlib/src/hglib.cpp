@@ -170,6 +170,8 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
             ss.clear(); ss.str(""); ss << "Coord" << i + 1 << ".Unit";
             (*ppFileInfo)->pUnits[i] = hconfig.getStringValue(ss.str());
 
+            std::cout << (*ppFileInfo)->pUnits[i] << std::endl;
+
             // scaling for SI units
             if ((*ppFileInfo)->pUnits[i].compare("mm") == 0) {
                 (*ppFileInfo)->pcUnits[i] = 'm';
@@ -179,10 +181,8 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
                 (*ppFileInfo)->pcUnits[i] = 's';
                 (*ppFileInfo)->pdScale[i] = (*ppFileInfo)->pdScale[i] * 1e-6;
                 (*ppFileInfo)->pdStart[i] = (*ppFileInfo)->pdStart[i] * 1e-6;
-            } else if ((*ppFileInfo)->pUnits[i].compare("deg")) {
+            } else if ((*ppFileInfo)->pUnits[i].compare("deg") == 0) {
                 (*ppFileInfo)->pcUnits[i] = '°';
-                (*ppFileInfo)->pdScale[i] = (*ppFileInfo)->pdScale[i];
-                (*ppFileInfo)->pdStart[i] = (*ppFileInfo)->pdStart[i];
             }
 
             // clearing stringstream
@@ -272,7 +272,14 @@ void HGParser::printExportTable(HGFileInfo** ppFileInfo ) {
             ss << "Coord" << i + 1 << ".Name";
             std::string szCoordName = hconfig.getStringValue(ss.str().c_str());
             std::transform(szCoordName.begin(), szCoordName.end(), szCoordName.begin(), ::tolower);
-            oFile << "| d" << szCoordName << "              " << "| " << (*ppFileInfo)->pdScale[i] * 1e3 << " mm |" << std::endl;
+            if ((*ppFileInfo)->pUnits[i].compare("mm") == 0) {
+                oFile << "| d" << szCoordName << "              " << "| " << (*ppFileInfo)->pdScale[i]*1e3  << " " << (*ppFileInfo)->pUnits[i] << " |" << std::endl;
+            } else if ((*ppFileInfo)->pUnits[i].compare((*ppFileInfo)->pUnits[i].size() - 1, 1, "s") == 0) {
+                oFile << "| d" << szCoordName << "              " << "| " << (*ppFileInfo)->pdScale[i]*1e6 << " " << (*ppFileInfo)->pUnits[i] << " |" << std::endl;
+            } else if ((*ppFileInfo)->pUnits[i].compare("deg") == 0 ) {
+                oFile << "| d" << szCoordName << "              " << "| " << (*ppFileInfo)->pdScale[i]  << " " << (*ppFileInfo)->pUnits[i] << " |" << std::endl;
+            }
+
             ss.clear(); ss.str("");
         }
         catch (HLibException /*e*/) {
