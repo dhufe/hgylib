@@ -72,13 +72,12 @@ void ConArgs::usage ( void ) {
     std::cout << "  commit rev: " << VersionInfo::GIT_SHA1 << std::endl;
     std::cout << "  commig msg: " << VersionInfo::GIT_COMMIT_SUBJECT << std::endl;
     std::cout << std::endl << std::endl;
-    std::cout << "Usage: "<< szApplicationName << " [-cil]" << std::endl << std::endl;
+    std::cout << "Usage: "<< szApplicationName << " [-io]" << std::endl << std::endl;
     std::cout << "  -i (--infile)         input filename (HGY format)" << std::endl;
-    std::cout << "  -c (--config)         output filename (MATLAB format)" << std::endl;
-    std::cout << "                        time, frequency, vrms" << std::endl;
+    std::cout << "  -o (--outfile)        output filename (MATLAB format)" << std::endl;
     std::cout << std::endl;
-    //std::cout << "  -l (--logfile)        logfile" << std::endl;
-    //std::cout << std::endl;
-    std::cout << "     --verbose          verbose output information" << std::endl;
+    std::cout << "  --export)             exports reconstruction parameters to markdown" << std::endl;
+    std::cout << std::endl;
+    std::cout << "  --verbose          verbose output information" << std::endl;
     std::cout << std::endl;
 }
