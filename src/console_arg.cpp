@@ -78,6 +78,6 @@ void ConArgs::usage ( void ) {
     std::cout << std::endl;
     std::cout << "  --export)             exports reconstruction parameters to markdown" << std::endl;
     std::cout << std::endl;
-    std::cout << "  --verbose          verbose output information" << std::endl;
+    std::cout << "  --verbose             verbose output information" << std::endl;
     std::cout << std::endl;
 }
