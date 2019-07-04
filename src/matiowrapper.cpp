@@ -36,13 +36,16 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
     int32_t* pI32Data = NULL;
     size_t nIndex     = 0;
 
+    bool bIsRotary    = false;
+
     // reconstruction parameters
     size_t  sDim[2] = { 1, pDataInfo->nCoordinates };
-    double* pdStart = new double[pDataInfo->nCoordinates];
-    double* pdScale = new double[pDataInfo->nCoordinates];
-    double* pdSizes = new double[pDataInfo->nCoordinates];
-    double* pnSizes = new double[pDataInfo->nCoordinates];
-    char*   pcUnits = new char[pDataInfo->nCoordinates];
+    double* pdStart  = new double[pDataInfo->nCoordinates];
+    double* pdScale  = new double[pDataInfo->nCoordinates];
+    double* pdSizes  = new double[pDataInfo->nCoordinates];
+    double* pnSizes  = new double[pDataInfo->nCoordinates];
+    char*   pcUnits  = new char[pDataInfo->nCoordinates];
+    int*   piRotary  = new int[pDataInfo->nCoordinates];
     // struct dimensions
     size_t  dims_struct[2] = { 1, 1 };
     std::stringstream ss;
@@ -112,16 +115,20 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
         pnSizes[i] = (double) (pDataInfo->pnDimension[i]);
         pdSizes[i] = (double)(pDataInfo->pdStart[i] + pDataInfo->pnDimension[i] * pDataInfo->pdScale[i]);
         pcUnits[i] = pDataInfo->pcUnits[i];
+        if (pcUnits[i] == '°')
+            piRotary[i] = 1;
+        else 
+            piRotary[i] = 0;
     }
 
     pMatVar = Mat_VarCalloc();
-    matvar_t** ppMatStructVars = (matvar_t**)calloc(6, sizeof(matvar_t*));
+    matvar_t** ppMatStructVars = (matvar_t**)calloc(6 , sizeof(matvar_t*));
 
     ppMatStructVars[0] = Mat_VarCreate("Scale", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, sDim, (void*)(pDataInfo->pdScale), 0);
     ppMatStructVars[1] = Mat_VarCreate("Start", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, sDim, (void*)(pDataInfo->pdStart), 0);
     ppMatStructVars[2] = Mat_VarCreate("Dimensions", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, sDim, (void*)(pnSizes), 0);
     ppMatStructVars[3] = Mat_VarCreate("Sizes", MAT_C_DOUBLE, MAT_T_DOUBLE, 2, sDim, (void*)(pdSizes), 0);
-    ppMatStructVars[4] = Mat_VarCreate("Units", MAT_C_CHAR, MAT_T_UTF16, 2, sDim, (void*)(pcUnits), 0);
+    ppMatStructVars[4] = Mat_VarCreate("Rotary", MAT_C_INT32, MAT_T_INT32, 2, sDim, (void*)(piRotary), 0);
     ppMatStructVars[5] = NULL;
 
     matvar_t*  pMatStruct = Mat_VarCreate("recparm", MAT_C_STRUCT, MAT_T_STRUCT, 2, dims_struct, ppMatStructVars, 0);
@@ -134,6 +141,7 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
     delete[] pdSizes;
     delete[] pnSizes;
     delete[] pcUnits;
+    delete[] piRotary;
 
     return true;
 }
