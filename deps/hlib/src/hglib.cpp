@@ -1,6 +1,5 @@
 #include <hglib.h>
 #include <fstream>
-#include <algorithm>
 #include <sstream>
 #include <stdexcept>
 #include <hlibexeception.h>
@@ -38,7 +37,7 @@ std::istream& operator >> ( std::istream& ins, HGParser::data& d ) {
         // catching n_pos > size() out of range exception
         try {
             value = s.substr( begin, end - begin );
-        } catch ( const std::out_of_range& /*e*/ ) {
+        } catch ( const std::out_of_range& e ) {
 
         }
         // Insert the properly extracted (key, value) pair into the map
@@ -46,6 +45,9 @@ std::istream& operator >> ( std::istream& ins, HGParser::data& d ) {
             continue;
 
         d[ key ] = value;
+
+        if ( ins.tellg() > d.nDataOffset)
+            break;
     }
 
     return ins;
@@ -65,7 +67,9 @@ std::ostream& operator << ( std::ostream& outs, const HGParser::data& d ) {
  HGParser::HGParser ( const std::string& szFileName, uint8_t nExport )
     : szHFileName( szFileName )
     , nDataOffset(0)
+    , nCurrentDataPointer(0)
     , nExport(nExport)
+    , pFileBinaryHd(0)
 {
 
 }
@@ -78,7 +82,7 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
     // parsing text part of tthe file
     try {
         parseTextPart();
-    } catch ( HLibException& /*e*/) {
+    } catch ( HLibException& e) {
         throw HLibException ( "Could not read file!");
     }
 
@@ -170,8 +174,6 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
             ss.clear(); ss.str(""); ss << "Coord" << i + 1 << ".Unit";
             (*ppFileInfo)->pUnits[i] = hconfig.getStringValue(ss.str());
 
-            std::cout << (*ppFileInfo)->pUnits[i] << std::endl;
-
             // scaling for SI units
             if ((*ppFileInfo)->pUnits[i].compare("mm") == 0) {
                 (*ppFileInfo)->pcUnits[i] = 'm';
@@ -181,8 +183,6 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
                 (*ppFileInfo)->pcUnits[i] = 's';
                 (*ppFileInfo)->pdScale[i] = (*ppFileInfo)->pdScale[i] * 1e-6;
                 (*ppFileInfo)->pdStart[i] = (*ppFileInfo)->pdStart[i] * 1e-6;
-            } else if ((*ppFileInfo)->pUnits[i].compare("deg") == 0) {
-                (*ppFileInfo)->pcUnits[i] = '°';
             }
 
             // clearing stringstream
@@ -264,28 +264,27 @@ void HGParser::printExportTable(HGFileInfo** ppFileInfo ) {
         // e.what();
     }
 
-    // get axis names and resolutions
-    std::stringstream ss;
+    try {
+        double dSampleRate = hconfig.getDoubleValue("MinSampleRate") * 1e-6;
+        oFile << "| Samplerate      " << "| " << dSampleRate << " MHz  |" << std::endl;
+    } catch (HLibException /*&e*/) {
+        // e.what();
+    }
+
     for (size_t i = 0; i < (*ppFileInfo)->nCoordinates; ++i) {
+        switch (i){
+            case 0:
+                oFile << "| dy              " << "| " << (*ppFileInfo)->pdScale[i] * 1e3 << " mm |" << std::endl;
+                break;
 
-        try {
-            ss << "Coord" << i + 1 << ".Name";
-            std::string szCoordName = hconfig.getStringValue(ss.str().c_str());
-            std::transform(szCoordName.begin(), szCoordName.end(), szCoordName.begin(), ::tolower);
-            if ((*ppFileInfo)->pUnits[i].compare("mm") == 0) {
-                oFile << "| d" << szCoordName << "              " << "| " << (*ppFileInfo)->pdScale[i]*1e3  << " " << (*ppFileInfo)->pUnits[i] << " |" << std::endl;
-            } else if ((*ppFileInfo)->pUnits[i].compare((*ppFileInfo)->pUnits[i].size() - 1, 1, "s") == 0) {
-                oFile << "| d" << szCoordName << "              " << "| " << (*ppFileInfo)->pdScale[i]*1e6 << " " << (*ppFileInfo)->pUnits[i] << " |" << std::endl;
-            } else if ((*ppFileInfo)->pUnits[i].compare("deg") == 0 ) {
-                oFile << "| d" << szCoordName << "              " << "| " << (*ppFileInfo)->pdScale[i]  << " " << (*ppFileInfo)->pUnits[i] << " |" << std::endl;
-            }
-
-            ss.clear(); ss.str("");
-        }
-        catch (HLibException /*e*/) {
-
+            case 1:
+                oFile << "| dx              " << "| " << (*ppFileInfo)->pdScale[i] * 1e3 << " mm |" << std::endl;
+                break;
+            default:
+                break;
         }
     }
+
 
     // print data
     try {
@@ -409,6 +408,48 @@ void HGParser::getData( char *pcAmplitude, HGFileInfo** ppFileInfo ) {
     }
 }
 
+void HGParser::openFileBinary ( void ) {
+    pFileBinaryHd = new std::ifstream( szHFileName.c_str() , std::ifstream::binary );
+    pFileBinaryHd->exceptions ( std::ifstream::badbit );
+}
+
+void HGParser::closeFileBinary( void ) {
+    pFileBinaryHd->close();
+}
+
+ssize_t HGParser::getDataChunk ( char* pcAmplitude, ssize_t nChunkSize, ssize_t nOffset, ssize_t nMaxSize ) {
+    if (pcAmplitude == nullptr)
+        return 0;
+
+    ssize_t nRead = 0;
+
+    if ( this->nCurrentDataPointer == 0)
+        this->nCurrentDataPointer = nOffset;
+
+    // number of bytes to read
+    ssize_t nEnd   = 0;
+
+    if ( ( nOffset + nMaxSize - this->nCurrentDataPointer ) >= nChunkSize )
+        nEnd = nChunkSize;// * sizeof(char);
+    else
+        nEnd = ( nOffset + nMaxSize - this->nCurrentDataPointer);// * sizeof(char);
+
+    // std::cout << "Reading position : 0x" << std::hex << this->nCurrentDataPointer << " - 0x" << std::hex << this->nCurrentDataPointer + nEnd / sizeof ( char ) << std::endl;
+
+    try {
+        // set file pointer to the chunk position
+        pFileBinaryHd->seekg ( this->nCurrentDataPointer );
+        pFileBinaryHd->read((char*)(pcAmplitude), nEnd * sizeof(char) );
+        nRead = pFileBinaryHd->gcount();
+        // std::cout << "Start: 0x" << std::hex << this->nCurrentDataPointer << std::dec << ". Read " << nRead << "/" << nEnd << " bytes." << std::endl;
+    } catch ( const std::ifstream::failure& e) {
+        throw HLibException ( "Exception opening/reading/closing file!!" );
+    }
+    this->nCurrentDataPointer += nChunkSize;
+
+    return nRead;
+}
+
 void HGParser::parseTextPart ( void ) {
     if ( this->szHFileName.empty() ) {
         throw HLibException ( "Filename not set!");
@@ -416,8 +457,22 @@ void HGParser::parseTextPart ( void ) {
         // just read the whole file
         std::ifstream f( szHFileName.c_str() , std::ifstream::in );
         f.exceptions ( std::ifstream::badbit );
+
         try {
             // and parse it
+            std::string str;
+            // find DataOffset
+            while (std::getline(f, str)) {
+                std::size_t found = str.find( "DataOffset" );
+                if (found!=std::string::npos) {
+                    found = str.find( "=" );
+                    std::istringstream ss( str.substr (found+1, str.size()-1) );
+                    ss >> hconfig.nDataOffset;
+                    break;
+                }
+            }
+            std::cout << hconfig.nDataOffset << std::endl;
+            f.seekg (0, f.beg);
             f >> hconfig;
             // finished
             f.close();

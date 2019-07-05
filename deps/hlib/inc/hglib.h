@@ -63,9 +63,12 @@ struct HGFileInfo {
 
 class HGParser {
     public:
-        explicit HGParser   ( const std::string& szFileName, uint8_t exportFlag = 0 );
-        void     parseFile  ( HGFileInfo** ppFileInfo );
-        void     getData	( char *pcAmplitude, HGFileInfo**);
+        explicit HGParser       ( const std::string& szFileName, uint8_t exportFlag = 0 );
+        void     parseFile      ( HGFileInfo** ppFileInfo );
+        void     openFileBinary ( void );
+        void     closeFileBinary( void );
+        void     getData	    ( char *pcAmplitude, HGFileInfo**);
+        ssize_t  getDataChunk   ( char* pcAmplitude, ssize_t, ssize_t, ssize_t );
         virtual ~HGParser   ( void );
 
     private:
@@ -78,15 +81,20 @@ class HGParser {
                 float   getFloatValue   ( const std::string& key );
                 double  getDoubleValue  ( const std::string& key );
                 std::string getStringValue(const std::string& key );
+                ssize_t nDataOffset;
         };
 
         friend std::istream& operator >> ( std::istream& ins, data& d );
         friend std::ostream& operator << ( std::ostream& outs, const data& d );
 
-        data hconfig;
-        ssize_t nDataOffset;
-        uint8_t nExport;
-    
+        data            hconfig;
+        ssize_t         nDataOffset;
+        uint8_t         nExport;
+        std::ifstream*  pFileBinaryHd;
+
+        // Chunk pointer
+        ssize_t     nCurrentDataPointer;
+
     private:
 
         /**
