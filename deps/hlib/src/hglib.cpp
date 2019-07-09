@@ -461,17 +461,18 @@ void HGParser::parseTextPart ( void ) {
         try {
             // and parse it
             std::string str;
-            // find DataOffset
+            // searching the data offset to reduce the amount of text to parse
             while (std::getline(f, str)) {
                 std::size_t found = str.find( "DataOffset" );
-                if (found!=std::string::npos) {
+                if ( found != std::string::npos ) {
                     found = str.find( "=" );
                     std::istringstream ss( str.substr (found+1, str.size()-1) );
                     ss >> hconfig.nDataOffset;
                     break;
                 }
             }
-            std::cout << hconfig.nDataOffset << std::endl;
+            // std::cout << hconfig.nDataOffset << std::endl;
+            // rewind the data pointer to the beginning of the file
             f.seekg (0, f.beg);
             f >> hconfig;
             // finished
