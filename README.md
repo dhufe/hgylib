@@ -12,8 +12,8 @@ Some proof of concept code is attached in the *src* directory and is able to rea
 
 Handling large files requires various changes and development checks
 
-[x] Framentational reading of input data
-[ ] Appending chunks of data to existing MATLAB variables by using libmatio (tested for 1D vectors)
-[x] Test sequencial read of large files with MATLAB (or at least h5py)
-[ ] Rewrite the code in a parallel woring producer/consumer scheme using threads
-[ ] Compiling against recent versions of hdf5 and libmatio
+- [x] Framentational reading of input data
+- [x] Appending chunks of data to existing MATLAB variables by using libmatio (tested for 1D vectors and 2D matrices)
+- [x] Test sequencial read of large files with MATLAB (or at least h5py)
+- [ ] Rewrite the code in a parallel woring producer/consumer scheme using threads
+- [x] Compiling against recent versions of hdf5 and libmatio
