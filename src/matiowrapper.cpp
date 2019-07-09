@@ -46,10 +46,11 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
     double* pnSizes  = new double[pDataInfo->nCoordinates];
     char*   pcUnits  = new char[pDataInfo->nCoordinates];
     int*   piRotary  = new int[pDataInfo->nCoordinates];
+
     // struct dimensions
     size_t  dims_struct[2] = { 1, 1 };
     std::stringstream ss;
-    
+
     for (std::vector<HGDataType>::iterator pIter = pDataInfo->pDataTypes->begin(); pIter != pDataInfo->pDataTypes->end(); ++pIter) {
 
         if (pSig == NULL) {
@@ -117,7 +118,7 @@ bool MatioWrapper::writeData(const HGFileInfo* pDataInfo, const char* pcData) {
         pcUnits[i] = pDataInfo->pcUnits[i];
         if (pcUnits[i] == '°')
             piRotary[i] = 1;
-        else 
+        else
             piRotary[i] = 0;
     }
 
