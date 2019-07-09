@@ -5,8 +5,34 @@ Code allows to read volumetric data (file extension .hgv) produced by the Hilgus
 
 The main usage of this code is to post-process recorded ultrasound data using Python.
 
+## Compiling
+
+Get a fresh copy using git and cloning the repository.
+
+``` bash
+git clone https://github.com/dkotscha/hgylib.git
+```
+
+The build process uses CMake to produce a binary. The setup is tested under macOS, Linux (amd64 and x86) and Microsoft Windows 7.
+
+``` bash
+mkdir build
+cd build
+cmake ../ -DCMAKE_BUILD_TYPE=Release
+make
+```
+
 ## Usage
+
 Some proof of concept code is attached in the *src* directory and is able to read the data files and convert them to MATLAB using the [matio library](https://sourceforge.net/projects/matio/).
+
+| Parameter      | Description                                                                       |
+| :------------- | --------------------------------------------------------------------------------: |
+| -i, --input    | Source/Input HILGUS files                                                         |
+| -o, --output   | Output MATLAB file                                                                |
+| --verbose      | Some additional output                                                            |
+| --export       | Creates a Markdown formated table with a minor set of reconstruction parameters   |
+
 
 ## Future ideas
 
