@@ -428,25 +428,21 @@ ssize_t HGParser::getDataChunk ( char* pcAmplitude, ssize_t nChunkSize, ssize_t 
 
     // number of bytes to read
     ssize_t nEnd   = 0;
-
     if ( ( nOffset + nMaxSize - this->nCurrentDataPointer ) >= nChunkSize )
-        nEnd = nChunkSize;// * sizeof(char);
+        nEnd = nChunkSize;
     else
-        nEnd = ( nOffset + nMaxSize - this->nCurrentDataPointer);// * sizeof(char);
-
-    // std::cout << "Reading position : 0x" << std::hex << this->nCurrentDataPointer << " - 0x" << std::hex << this->nCurrentDataPointer + nEnd / sizeof ( char ) << std::endl;
+        nEnd = ( nOffset + nMaxSize - this->nCurrentDataPointer);
 
     try {
-        // set file pointer to the chunk position
-        pFileBinaryHd->seekg ( this->nCurrentDataPointer );
+        // necessary !? we do not open and close the file anymore between two readings
+        // pFileBinaryHd->seekg ( this->nCurrentDataPointer );
+
         pFileBinaryHd->read((char*)(pcAmplitude), nEnd * sizeof(char) );
         nRead = pFileBinaryHd->gcount();
-        // std::cout << "Start: 0x" << std::hex << this->nCurrentDataPointer << std::dec << ". Read " << nRead << "/" << nEnd << " bytes." << std::endl;
     } catch ( const std::ifstream::failure& e) {
         throw HLibException ( "Exception opening/reading/closing file!!" );
     }
     this->nCurrentDataPointer += nChunkSize;
-
     return nRead;
 }
 
