@@ -13,6 +13,6 @@ print ( ds.shape )
 print ( type(ds) )
 
 # Access an inset of the loaded data
-nA = ds[0,500:1500]
+nA = ds[500:2500, 500]
 print ( nA.shape )
 print ( type(nA) )
