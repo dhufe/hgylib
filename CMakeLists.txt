@@ -99,15 +99,18 @@ IF (MSVC)
         hgyparser
         debug
         ${LIBMATIO_LIBRARIESD}
+        pthread
         hg
         optimized
         ${LIBMATIO_LIBRARIES}
+        pthread
         hg
         )
 ELSE (MSVC)
     TARGET_LINK_LIBRARIES (
         hgyparser
         ${LIBMATIO_LIBRARIES}
+        pthread
         hg
         )
 ENDIF(MSVC)
