@@ -7,6 +7,7 @@
 
 #include <thread>
 #include <mutex>
+#include <atomic>
 #include <condition_variable>
 
 
@@ -17,6 +18,7 @@ class ConArgs {
             : verbose_flag ( 0 )
             , export_flag(0)
             , pFile ( nullptr )
+            , bReady ( false )
         {
 
         }
@@ -26,6 +28,7 @@ class ConArgs {
         std::string szApplicationName;
         std::mutex              mutex;
         std::condition_variable condi;
+        bool       bReady;
         int verbose_flag;
         int export_flag;
         HGFileInfo* pFile;

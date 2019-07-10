@@ -73,7 +73,7 @@ int main ( int argc, char* argv[] ) {
 
 //        HGParser hp(pConfigArgs->szInputFileName, pConfigArgs->export_flag );
  // char* pcData = nullptr;
- // HGFileInfo* pFile = pConfigArgs->pFile;
+//        HGFileInfo* pFile = pConfigArgs->pFile;
 
 //        std::cout << "Number of coordinates: " << pFile->nCoordinates << std::endl;
 

@@ -3,6 +3,8 @@
 #include "hlibexeception.h"
 #include <iostream>
 
+#include <chrono>
+
 
 Producer::Producer ( ConArgs** ppConArg, TQueue<std::vector<char>>& queue )
     : _pConArgs ( *ppConArg )
@@ -16,7 +18,7 @@ void* Producer::run( void ) {
     std::cout << "Producer thread is up and running." << std::endl;
     std::cout << "Input file: " << _pConArgs->szInputFileName << std::endl;
 
-    std::lock_guard<std::mutex> locker(_pConArgs->mutex );
+    std::unique_lock<std::mutex> locker(_pConArgs->mutex );
 
     HGParser hp( _pConArgs->szInputFileName, _pConArgs->export_flag );
 
@@ -29,12 +31,14 @@ void* Producer::run( void ) {
         //        return EXIT_FAILURE;
     }
 
-    _pConArgs->condi.notify_all();
-
+    _pConArgs->condi.notify_one();
+    _pConArgs->bReady = true;
     /*
      *  This is the place where the magic happens.
      */
 
+
+//    std::this_thread::sleep_for(std::chrono::seconds(5) );
     std::cout << "producer thread end of life reached." << std::endl;
     return 0;
 }

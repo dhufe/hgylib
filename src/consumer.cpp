@@ -15,7 +15,9 @@ void* Consumer::run ( void ) {
 
     std::unique_lock<std::mutex> lk(_pConArgs->mutex);
 
-    _pConArgs->condi.wait( lk );
+    while (! _pConArgs->bReady ) {
+        _pConArgs->condi.wait( lk );
+    }
 
 
     //
