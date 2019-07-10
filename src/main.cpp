@@ -25,6 +25,9 @@
 #include <hlibexeception.h>
 #include <console_arg.h>
 #include <matiowrapper.h>
+#include <consumer.h>
+#include <producer.h>
+#include <threadqueue.h>
 #include <version.h>
 
 int main ( int argc, char* argv[] ) {
@@ -58,63 +61,38 @@ int main ( int argc, char* argv[] ) {
         std::cout << "  commig msg: " << VersionInfo::GIT_COMMIT_SUBJECT << std::endl;
         std::cout << std::endl << std::endl;
 
-        HGParser hp(pConfigArgs->szInputFileName, pConfigArgs->export_flag );
-        char* pcData = nullptr;
-        HGFileInfo* pFile = nullptr;
+        TQueue<std::vector<char>> queue;
+        Producer producer ( &pConfigArgs, queue );
+        Consumer consumer ( &pConfigArgs, queue );
 
-        try {
-            hp.parseFile(&pFile);
-        }
-        catch (const HLibException& e) {
-            std::cerr << "An error was reported : " << e.what() << std::endl;
-            return EXIT_FAILURE;
-        }
+        producer.start();
+        consumer.start();
 
-        if (pConfigArgs->verbose_flag) {
+        producer.join();
+        consumer.join();
 
-            std::cout << "Dimensions : ";
-            for (auto i = 0; i < pFile->nCoordinates; i++) {
-                if (i < pFile->nCoordinates - 1)
-                    std::cout << pFile->pnDimension[i] << " x ";
-                else
-                    std::cout << pFile->pnDimension[i] << std::endl;
-            }
+//        HGParser hp(pConfigArgs->szInputFileName, pConfigArgs->export_flag );
+ // char* pcData = nullptr;
+ // HGFileInfo* pFile = pConfigArgs->pFile;
 
-            std::cout << "Start : ";
-            for (auto i = 0; i < pFile->nCoordinates; i++) {
-                if (i < pFile->nCoordinates - 1)
-                    std::cout << pFile->pdStart[i] << " x ";
-                else
-                    std::cout << pFile->pdStart[i] << std::endl;
-            }
+//        std::cout << "Number of coordinates: " << pFile->nCoordinates << std::endl;
 
-            std::cout << "Scaling : ";
-            for (auto i = 0; i < pFile->nCoordinates; i++) {
-                if (i < pFile->nCoordinates - 1)
-                    std::cout << pFile->pdScale[i] << " x ";
-                else
-                    std::cout << pFile->pdScale[i] << std::endl;
-            }
-
-
-            if (pFile->pDataTypes) {
-                std::cout << std::endl << pFile->pDataTypes->size() << " different types of measurement data." << std::endl;
-                int i = 0;
-                for (std::vector<HGDataType>::iterator pIter = pFile->pDataTypes->begin(); pIter != pFile->pDataTypes->end(); ++pIter) {
-                    i++;
-                    std::cout << "data set #" << i << " Datatype : " << (*pIter).toString() << " DataOffset : " << (*pIter).nDataOffset << " Size : " << (*pIter).nBytes << " bytes" << std::endl;
-                }
-            }
-
-            std::cout << "total size of data region : " << pFile->nBytes << " Bytes" << std::endl;
-        }
-        try {
+ // try {
+ // hp.parseFile(&pFile);
+ // }
+ // catch (const HLibException& e) {
+ // std::cerr << "An error was reported : " << e.what() << std::endl;
+ // return EXIT_FAILURE;
+ // }
+ /*
+       try {
             pcData = new char[pFile->nBytes];
         }
         catch (std::bad_alloc) {
             std::cerr << "unable to allocate memory!" << std::endl;
         }
-
+        */
+/*
         try {
             hp.getData(pcData, &pFile);
         }
@@ -124,10 +102,12 @@ int main ( int argc, char* argv[] ) {
 
         MatioWrapper wrapper(pConfigArgs->szOutputFileName);
         wrapper.writeData(pFile, pcData);
+*/
 
-        delete[] pcData;
+
+//        delete[] pcData;
         delete pConfigArgs;
-        delete pFile;
+//        delete pFile;
 
         return EXIT_SUCCESS;
     }

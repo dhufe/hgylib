@@ -3,6 +3,12 @@
 
 #include <string>
 #include <getopt.h>
+#include <hglib.h>
+
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+
 
 class ConArgs {
     public:
@@ -10,6 +16,7 @@ class ConArgs {
         ConArgs(void)
             : verbose_flag ( 0 )
             , export_flag(0)
+            , pFile ( nullptr )
         {
 
         }
@@ -17,9 +24,11 @@ class ConArgs {
         std::string szInputFileName;
         std::string szOutputFileName;
         std::string szApplicationName;
-
-        int verbose_flag;   
+        std::mutex              mutex;
+        std::condition_variable condi;
+        int verbose_flag;
         int export_flag;
+        HGFileInfo* pFile;
 
         /**
          * Creates the basename of an passed path.

@@ -5,6 +5,7 @@
 #include <string>
 #include <cstdint>
 #include <vector>
+
 #if defined(_MSC_VER)
 #include <BaseTsd.h>
 typedef SSIZE_T ssize_t;
@@ -86,7 +87,7 @@ class HGParser {
         data hconfig;
         ssize_t nDataOffset;
         uint8_t nExport;
-    
+
     private:
 
         /**

@@ -48,7 +48,7 @@ int ConArgs::parse_arguments_long ( int argc, char* argv[], const char* cOptions
     if (szInputFileName.empty())
         return -1;
 
-    if (szInputFileName.empty()) {
+    if (szOutputFileName.empty()) {
         szOutputFileName = remove_extension(szInputFileName) + ".mat";
     }
 
