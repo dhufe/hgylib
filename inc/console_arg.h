@@ -24,7 +24,7 @@ class ConArgs {
         /**
          * Creates the basename of an passed path.
          *
-         * @author Daniel Kotschate
+         * @author Daniel Hufschlaeger
          * @date 1/18/2016
          *
          * @tparam T	Generic type parameter.
@@ -42,7 +42,7 @@ class ConArgs {
         /**
          * Path name.
          *
-         * @author Daniel Kotschate
+         * @author Daniel Hufschlaeger
          * @date 1/18/2016
          *
          * @tparam T Generic type parameter.
@@ -63,7 +63,7 @@ class ConArgs {
         /**
          * Removes the extension described by filename.
          *
-         * @author Daniel Kotschate
+         * @author Daniel Hufschlaeger
          * @date 1/18/2016
          *
          * @tparam T Generic type parameter.
