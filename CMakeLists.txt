@@ -16,11 +16,10 @@ ADD_SUBDIRECTORY ( deps )
 source_group("Sources" FILES ${PROJECT_SOURCES})
 source_group("Headers" FILES ${PROJECT_HEADERS})
 
-IF (WIN32)
-     SET ( GIT_EXECUTABLE "git.exe" )
-ELSE (WIN32)
-    SET ( GIT_EXECUTABLE "git" )
-ENDIF(WIN32)
+find_package(Git)
+if(Git_FOUND)
+  message("Git found: ${GIT_EXECUTABLE}")
+
 
 execute_process(COMMAND
     "${GIT_EXECUTABLE}"
@@ -54,7 +53,7 @@ execute_process(COMMAND
 configure_file("${PROJECT_SOURCE_DIR}/src/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/generated/version.cpp" @ONLY)
 
 SET ( PROJECT_SOURCES ${PROJECT_SOURCES} "${CMAKE_CURRENT_BINARY_DIR}/generated/version.cpp" )
-
+endif()
 
 IF (MSVC)
     ADD_DEFINITIONS(-DDOWAIT -D_CRT_SECURE_NO_WARNINGS)
