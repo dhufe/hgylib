@@ -27,7 +27,9 @@ struct HGDataType {
     HGDataType( eDataType _type )
         : DataType( _type )
         , nBytes( 0 )
+        , nDataWordSize(0)
         , nDataOffset( 0 )
+        , dScaling (0)
     {
 
     }
