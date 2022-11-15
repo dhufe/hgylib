@@ -36,7 +36,7 @@ set(LIBMATIO_INCLUDE_DIRS ${LIBMATIO_INCLUDE_DIR} )
 include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set LIBMATIO_FOUND to TRUE
 # if all listed variables are TRUE
-find_package_handle_standard_args(LIBMATIO  DEFAULT_MSG
+find_package_handle_standard_args( Matio  DEFAULT_MSG
                                   LIBMATIO_LIBRARIES LIBMATIO_INCLUDE_DIRS)
 
 #message(STATUS "INCLUDE: ${LIBMATIO_INCLUDE_DIR}")

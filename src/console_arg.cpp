@@ -58,14 +58,14 @@ int ConArgs::parse_arguments_long ( int argc, char* argv[], const char* cOptions
 /**
  * Usage information on prompt.
  *
- * @author Daniel Kotschate
+ * @author Daniel Hufschl√§ger
  * @date 15/12/2015
  */
 
 void ConArgs::usage ( void ) {
     std::cout << std::endl;
     std::cout << szApplicationName << std::endl;
-    std::cout << "Copyright © Daniel Kotschate (dkotscha)" << std::endl;
+    std::cout << "Copyright © Daniel Hufschlaeger (dhufe)" << std::endl;
     std::cout << std::endl;
     std::cout << "Version info:" << std::endl;
     std::cout << "  last commit: " << VersionInfo::GIT_DATE << std::endl;
@@ -76,7 +76,7 @@ void ConArgs::usage ( void ) {
     std::cout << "  -i (--infile)         input filename (HGY format)" << std::endl;
     std::cout << "  -o (--outfile)        output filename (MATLAB format)" << std::endl;
     std::cout << std::endl;
-    std::cout << "  --export)             exports reconstruction parameters to markdown" << std::endl;
+    std::cout << "  --export              exports reconstruction parameters to markdown" << std::endl;
     std::cout << std::endl;
     std::cout << "  --verbose             verbose output information" << std::endl;
     std::cout << std::endl;

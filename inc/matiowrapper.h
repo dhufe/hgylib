@@ -4,14 +4,14 @@
 *
 * Detailed description starts here.
 *
-*     @author  Daniel Kotschate (daniel), daniel@epyx-online.de
+*     @author  Daniel Hufschlaeger (dhufe), daniel@hufschlaeger.net
 *
 *   @internal
 *     Created  29.04.2016
 *    Revision  ---
 *    Compiler  gcc/g++
-*     Company  daniel@epyx-online.de
-*   Copyright  Copyright (c) 2016, Daniel Kotschate
+*     Company  dhufe@hufschlaeger.net
+*   Copyright  Copyright (c) 2016, Daniel Hufschlaeger
 *
 * This source code is released for free distribution under the terms of the
 * GNU General Public License as published by the Free Software Foundation.
