@@ -107,6 +107,9 @@ void  HGParser::parseFile( HGFileInfo **ppFileInfo) {
             case 'V':
                 (*ppFileInfo)->pDataTypes->push_back(HGDataType(HGDataType::HGYVScan));
                 break;
+            case 'B':
+                (*ppFileInfo)->pDataTypes->push_back(HGDataType(HGDataType::HGYBScan));
+                break;
             case 'C':
                 (*ppFileInfo)->pDataTypes->push_back(HGDataType(HGDataType::HGYCScan));
                 break;

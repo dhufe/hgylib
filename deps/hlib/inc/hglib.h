@@ -12,6 +12,7 @@ typedef SSIZE_T ssize_t;
 
 static const char *HGDataTypeStr[] = {
     "HGYVScan",
+    "HGYBScan",
     "HGYCScan",
     "HGYDScan"
 };
@@ -20,8 +21,9 @@ struct HGDataType {
 
     enum eDataType {
         HGYVScan = 0x00,
-        HGYCScan = 0x01,
-        HGYDScan = 0x02
+        HGYBScan = 0x01,
+        HGYCScan = 0x02,
+        HGYDScan = 0x03
     };
 
     HGDataType( eDataType _type )
