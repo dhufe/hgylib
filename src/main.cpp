@@ -21,7 +21,6 @@
 #include <console_arg.h>
 #include <hglib.h>
 #include <hlibexeception.h>
-#include <inttypes.h>
 #include <matiowrapper.h>
 #include <version.h>
 
