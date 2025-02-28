@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.10...3.50)
 
 PROJECT ( hgyparser )
 
@@ -85,6 +85,7 @@ ENDIF (MSVC)
 
 link_directories(
     "/usr/local/lib"
+    "/opt/homebrew/lib"
     )
 
 ADD_EXECUTABLE(
