@@ -43,6 +43,7 @@ struct HGFileInfo {
   double *pdScale;
   double *pdStart;
   std::string *pUnits;
+  std::string szFileName;
   char *pcUnits;
   ssize_t nSamples;
   ssize_t nBytes;
